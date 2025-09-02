@@ -3,3 +3,4 @@ dist
 .nuxt
 docs
 README.md
+server/database/schema.ts
