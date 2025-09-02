@@ -60,4 +60,5 @@ ALTER TABLE "technologies" ADD CONSTRAINT "technologies_workspace_id_workspaces_
 ALTER TABLE "workspace_users" ADD CONSTRAINT "workspace_users_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "workspace_users" ADD CONSTRAINT "workspace_users_workspace_id_workspaces_id_fk" FOREIGN KEY ("workspace_id") REFERENCES "public"."workspaces"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 CREATE UNIQUE INDEX "workspace_technology_idx" ON "technologies" USING btree ("workspace_id","name");--> statement-breakpoint
-CREATE UNIQUE INDEX "email_idx" ON "users" USING btree ("email");
+CREATE UNIQUE INDEX "email_idx" ON "users" USING btree ("email");--> statement-breakpoint
+CREATE UNIQUE INDEX "workspace_name_idx" ON "workspaces" USING btree ("name");

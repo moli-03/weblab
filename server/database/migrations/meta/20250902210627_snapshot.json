@@ -1,5 +1,5 @@
 {
-  "id": "13fcdcc8-a0e7-42ed-9ae3-19c3929c191a",
+  "id": "766db1bd-7db8-45ec-8264-831e73111a78",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -59,8 +59,12 @@
           "name": "login_audit_user_id_users_id_fk",
           "tableFrom": "login_audit",
           "tableTo": "users",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -176,8 +180,12 @@
           "name": "technologies_workspace_id_workspaces_id_fk",
           "tableFrom": "technologies",
           "tableTo": "workspaces",
-          "columnsFrom": ["workspace_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "workspace_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -305,8 +313,12 @@
           "name": "workspace_users_user_id_users_id_fk",
           "tableFrom": "workspace_users",
           "tableTo": "users",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -314,8 +326,12 @@
           "name": "workspace_users_workspace_id_workspaces_id_fk",
           "tableFrom": "workspace_users",
           "tableTo": "workspaces",
-          "columnsFrom": ["workspace_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "workspace_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -323,7 +339,10 @@
       "compositePrimaryKeys": {
         "workspace_users_user_id_workspace_id_pk": {
           "name": "workspace_users_user_id_workspace_id_pk",
-          "columns": ["user_id", "workspace_id"]
+          "columns": [
+            "user_id",
+            "workspace_id"
+          ]
         }
       },
       "uniqueConstraints": {},
@@ -363,7 +382,23 @@
           "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "workspace_name_idx": {
+          "name": "workspace_name_idx",
+          "columns": [
+            {
+              "expression": "name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
@@ -376,22 +411,39 @@
     "public.technology_category": {
       "name": "technology_category",
       "schema": "public",
-      "values": ["technique", "tool", "platform", "framework"]
+      "values": [
+        "technique",
+        "tool",
+        "platform",
+        "framework"
+      ]
     },
     "public.technology_ring": {
       "name": "technology_ring",
       "schema": "public",
-      "values": ["adopt", "trial", "assess", "hold"]
+      "values": [
+        "adopt",
+        "trial",
+        "assess",
+        "hold"
+      ]
     },
     "public.technology_status": {
       "name": "technology_status",
       "schema": "public",
-      "values": ["draft", "published"]
+      "values": [
+        "draft",
+        "published"
+      ]
     },
     "public.user_role": {
       "name": "user_role",
       "schema": "public",
-      "values": ["admin", "cto", "customer"]
+      "values": [
+        "admin",
+        "cto",
+        "customer"
+      ]
     }
   },
   "schemas": {},

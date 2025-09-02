@@ -32,7 +32,7 @@ export const workspaces = pgTable("workspaces", {
     name: varchar("name", { length: 255 }).notNull(),
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow(),
-});
+}, table => [uniqueIndex("workspace_name_idx").on(table.name)]);
 
 export const workspaceUsers = pgTable("workspace_users", {
     userId: uuid("user_id").notNull().references(() => users.id),
