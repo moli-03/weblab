@@ -2,37 +2,56 @@ import "dotenv/config";
 
 import { reset, seed } from "drizzle-seed";
 import { db } from "./index";
-import { users } from "./schema";
+import { loginAudit, type NewWorkspaceUser, technologies, users, workspaces, workspaceUsers } from "./schema";
 import { hashPassword } from "../security/password";
 
 const main = async () => {
   try {
     console.log("Seeding database...");
 
-    await reset(db, { users });
+    await reset(db, { workspaceUsers, technologies, users, workspaces, loginAudit });
 
-    await db
-      .insert(users)
-      .values({
-        name: "SysAdmin",
-        email: "sysadmin@example.com",
-        roles: ["admin"],
-        passwordHash: await hashPassword("hslu1234"),
-      })
-      .returning();
+    const workspaceCount: number = 5;
 
-    const defaultPassword = await hashPassword("password");
+    await seed(db, { workspaces }).refine(f => ({
+      workspaces: {
+        count: workspaceCount,
+        columns: {
+          name: f.companyName(),
+        },
+      },
+    }));
 
+    // Random admins for the workspaces
+    const adminPassword = await hashPassword("hslu1234");
     await seed(db, { users }).refine(f => ({
       users: {
-        count: 10,
+        count: workspaceCount,
         columns: {
           passwordHash: f.default({
-            defaultValue: defaultPassword,
+            defaultValue: adminPassword,
           }),
-          roles: f.valuesFromArray({
-            values: ["cto", "customer"],
-            arraySize: 1,
+        },
+      },
+    }));
+
+    const admins = await db.query.users.findMany();
+    const allWorkspaces = await db.query.workspaces.findMany();
+    await db.insert(workspaceUsers).values(
+      admins.map<NewWorkspaceUser>((admin, index) => ({
+        userId: admin.id,
+        workspaceId: allWorkspaces[index % allWorkspaces.length].id,
+        role: "admin",
+      })),
+    );
+
+    // Some technologies
+    await seed(db, { technologies }).refine(f => ({
+      technologies: {
+        count: 10,
+        columns: {
+          workspaceId: f.valuesFromArray({
+            values: allWorkspaces.map(workspace => workspace.id),
           }),
         },
       },

@@ -30,7 +30,6 @@ export default defineEventHandler(async event => {
         email,
         name,
         passwordHash: await hashPassword(password),
-        roles: ["customer"],
       })
       .returning();
 
