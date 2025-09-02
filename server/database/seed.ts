@@ -3,34 +3,32 @@ import "dotenv/config";
 import { reset, seed } from "drizzle-seed";
 import { db } from "./index";
 import { users } from "./schema";
+import { hashPassword } from "../security/password";
 
 const main = async () => {
   try {
     console.log("Seeding database...");
 
-    console.log("Removing old data");
     await reset(db, { users });
 
-    console.log("Seeding admin");
     await db
       .insert(users)
       .values({
         name: "SysAdmin",
         email: "sysadmin@example.com",
         roles: ["admin"],
-        passwordHash: "hashedpassword", // TODO: Replace with actual hash
+        passwordHash: await hashPassword("hslu"),
       })
       .returning();
 
-    console.log("Admin user created");
+    const defaultPassword = await hashPassword("password");
 
-    console.log("Creating demo users");
     await seed(db, { users }).refine(f => ({
       users: {
         count: 10,
         columns: {
           passwordHash: f.default({
-            defaultValue: "PretendThatImAPasswordHash",
+            defaultValue: defaultPassword,
           }),
           roles: f.valuesFromArray({
             values: ["cto", "customer"],
@@ -40,8 +38,7 @@ const main = async () => {
       },
     }));
 
-    console.log("Created some demo users");
-    console.log("Database seeding completed successfully!");
+    console.log("Database seeding complete");
     process.exit(0);
   } catch (error) {
     console.error("Error seeding database:", error);
