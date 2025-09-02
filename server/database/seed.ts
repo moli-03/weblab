@@ -17,7 +17,7 @@ const main = async () => {
         name: "SysAdmin",
         email: "sysadmin@example.com",
         roles: ["admin"],
-        passwordHash: await hashPassword("hslu"),
+        passwordHash: await hashPassword("hslu1234"),
       })
       .returning();
 
