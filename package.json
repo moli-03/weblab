@@ -8,23 +8,37 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "test": "vitest",
+    "test:unit": "vitest --project unit",
+    "test:integration": "vitest --project integration",
+    "test:nuxt": "vitest --project nuxt",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:seed": "npx tsx ./server/database/seed.ts"
   },
   "dependencies": {
     "@nuxt/eslint": "^1.9.0",
     "@nuxt/ui": "^3.3.2",
+    "drizzle-orm": "^0.44.5",
+    "drizzle-seed": "^0.3.1",
     "eslint": "^9.34.0",
     "nuxt": "^4.0.3",
+    "pg": "^8.16.3",
+    "postgres": "^3.4.7",
     "typescript": "^5.9.2",
     "vue": "^3.5.20",
     "vue-router": "^4.5.1"
   },
   "devDependencies": {
     "@nuxt/test-utils": "^3.19.2",
+    "@types/pg": "^8.15.5",
     "@vue/test-utils": "^2.4.6",
+    "drizzle-kit": "^0.31.4",
     "happy-dom": "^18.0.1",
     "playwright-core": "^1.55.0",
     "prettier": "^3.6.2",
+    "tsx": "^4.20.5",
     "vitest": "^3.2.4"
   }
 }
