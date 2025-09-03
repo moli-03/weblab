@@ -22,7 +22,12 @@
       </p>
 
       <div class="flex flex-col sm:flex-row gap-4 mb-16">
-        <UButton size="xl" class="px-8 py-4" icon="material-symbols:explore"> Explore Workspaces </UButton>
+        <UButton v-if="isLoggedIn" size="xl" class="px-8 py-4" icon="material-symbols:explore" to="/workspaces/discover"
+          >Explore Workspaces</UButton
+        >
+        <UButton v-if="!isLoggedIn" size="xl" class="px-8 py-4" icon="material-symbols:explore" to="/auth/register"
+          >Explore Workspaces</UButton
+        >
         <UButton
           v-if="!isLoggedIn"
           variant="outline"

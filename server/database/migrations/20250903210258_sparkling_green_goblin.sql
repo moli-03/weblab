@@ -52,7 +52,7 @@ CREATE TABLE "workspaces" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" varchar(255) NOT NULL,
 	"slug" varchar(255) NOT NULL,
-	"logo_url" varchar(255) NOT NULL,
+	"logo_url" varchar(255),
 	"description" text NOT NULL,
 	"owner_id" uuid NOT NULL,
 	"is_public" boolean DEFAULT true NOT NULL,

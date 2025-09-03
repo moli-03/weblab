@@ -1,5 +1,5 @@
 {
-  "id": "fd4857ae-6a38-42d3-a5ac-d75290e84984",
+  "id": "20e6938a-afeb-4b33-9d1f-821b913a9c15",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -377,7 +377,7 @@
           "name": "logo_url",
           "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "description": {
           "name": "description",

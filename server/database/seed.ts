@@ -47,6 +47,7 @@ const main = async () => {
               "https://img.freepik.com/free-vector/abstract-company-logo_53876-120501.jpg",
               "https://nuxt.com/assets/design-kit/icon-green.svg",
               "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Tailwind_CSS_Logo.svg/2560px-Tailwind_CSS_Logo.svg.png",
+              undefined,
             ],
           }),
           description: f.loremIpsum(),

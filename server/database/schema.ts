@@ -31,7 +31,7 @@ export const workspaces = pgTable("workspaces", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: varchar("name", { length: 255 }).notNull(),
   slug: varchar("slug", { length: 255 }).notNull(),
-  logoUrl: varchar("logo_url", { length: 255 }).notNull(),
+  logoUrl: varchar("logo_url", { length: 255 }),
   description: text("description").notNull(),
   ownerId: uuid("owner_id").notNull().references(() => users.id),
   isPublic: boolean("is_public").notNull().default(true),

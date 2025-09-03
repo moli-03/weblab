@@ -28,6 +28,7 @@
           color: "success",
           icon: "i-heroicons-check-circle-solid",
         });
+        navigateTo("/workspaces");
       })
       .catch(error => {
         console.error("failed to login", error);
