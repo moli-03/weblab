@@ -15,7 +15,8 @@
     "test:nuxt": "vitest --project nuxt",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:seed": "npx tsx ./server/database/seed.ts"
+    "db:seed": "npx tsx ./server/database/seed.ts",
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
     "@nuxt/eslint": "^1.9.0",
@@ -24,6 +25,7 @@
     "drizzle-orm": "^0.44.5",
     "drizzle-seed": "^0.3.1",
     "eslint": "^9.34.0",
+    "jsonwebtoken": "^9.0.2",
     "nuxt": "^4.0.3",
     "pg": "^8.16.3",
     "postgres": "^3.4.7",
@@ -35,6 +37,7 @@
   "devDependencies": {
     "@nuxt/test-utils": "^3.19.2",
     "@types/bcrypt": "^6.0.0",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/pg": "^8.15.5",
     "@vue/test-utils": "^2.4.6",
     "drizzle-kit": "^0.31.4",

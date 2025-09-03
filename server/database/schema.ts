@@ -19,7 +19,7 @@ export const users = pgTable("users", {
 
 export const loginAudit = pgTable("login_audit", {
     id: uuid("id").primaryKey().defaultRandom(),
-    userId: uuid("user_id").notNull().references(() => users.id),
+    userId: uuid("user_id").references(() => users.id),
     attemptedAt: timestamp("attempted_at").defaultNow().notNull(),
     ipAddress: inet("ip_address").notNull(),
     userAgent: text("user_agent").notNull(),
@@ -91,9 +91,13 @@ export const userWorkspaceRelations = relations(workspaceUsers, ({ one }) => ({
 // Types
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
+
 export type Workspace = typeof workspaces.$inferSelect;
 export type NewWorkspace = typeof workspaces.$inferInsert;
+export type UserRole = typeof workspaceUsers.$inferSelect.role;
+
 export type WorkspaceUser = typeof workspaceUsers.$inferSelect;
 export type NewWorkspaceUser = typeof workspaceUsers.$inferInsert;
+
 export type Technology = typeof technologies.$inferSelect;
 export type NewTechnology = typeof technologies.$inferInsert;

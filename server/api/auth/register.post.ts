@@ -2,29 +2,33 @@ import { eq } from "drizzle-orm";
 import z from "zod";
 import { db } from "~~/server/database";
 import { users } from "~~/server/database/schema";
+import { toPublicUser } from "~~/server/utils/response-sanitizer";
 import { hashPassword } from "~~/server/security/password";
 
 const bodySchema = z.object({
-  email: z.email().refine(
-    async email => {
-      const existingUser = await db.query.users.findFirst({
-        where: eq(users.email, email),
-      });
-      return !existingUser;
-    },
-    {
-      error: "Email already in use",
-    },
-  ),
-  password: z.string().min(8),
   name: z.string().min(2).max(255),
+  email: z
+    .email()
+    .max(255)
+    .refine(
+      async email => {
+        const existingUser = await db.query.users.findFirst({
+          where: eq(users.email, email),
+        });
+        return !existingUser;
+      },
+      {
+        error: "Email already in use",
+      },
+    ),
+  password: z.string().min(8),
 });
 
 export default defineEventHandler(async event => {
   const { email, password, name } = await readValidatedBody(event, bodySchema.parseAsync);
 
   try {
-    const user = await db
+    const [user] = await db
       .insert(users)
       .values({
         email,
@@ -34,7 +38,7 @@ export default defineEventHandler(async event => {
       .returning();
 
     return {
-      user,
+      user: toPublicUser(user),
     };
   } catch (error) {
     console.error("Error registering user:", error);

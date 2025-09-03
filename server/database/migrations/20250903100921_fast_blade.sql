@@ -4,7 +4,7 @@ CREATE TYPE "public"."technology_status" AS ENUM('draft', 'published');--> state
 CREATE TYPE "public"."user_role" AS ENUM('admin', 'cto', 'customer');--> statement-breakpoint
 CREATE TABLE "login_audit" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"user_id" uuid NOT NULL,
+	"user_id" uuid,
 	"attempted_at" timestamp DEFAULT now() NOT NULL,
 	"ip_address" "inet" NOT NULL,
 	"user_agent" text NOT NULL,

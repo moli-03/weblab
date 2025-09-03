@@ -1,4 +1,4 @@
-import { hashPassword, comparePasswords } from "../../server/security/password";
+import { hashPassword, verifyPassword } from "../../server/security/password";
 import { describe, expect, it } from "vitest";
 
 describe("Bcrypt Password Hashing", () => {
@@ -11,14 +11,14 @@ describe("Bcrypt Password Hashing", () => {
   it("can compare a password", async () => {
     const password = "HelloWorld";
     const hashed = await hashPassword(password);
-    const isMatch = await comparePasswords(password, hashed);
+    const isMatch = await verifyPassword(password, hashed);
     expect(isMatch).toBe(true);
   });
 
   it("returns false on a wrong password", async () => {
     const password = "HelloWorld";
     const hashed = await hashPassword(password);
-    const isMatch = await comparePasswords("WrongPassword", hashed);
+    const isMatch = await verifyPassword("WrongPassword", hashed);
     expect(isMatch).toBe(false);
   });
 });
