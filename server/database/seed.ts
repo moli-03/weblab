@@ -14,7 +14,7 @@ const main = async () => {
     const adminPassword = await hashPassword("hslu1234");
 
     // Default admin account
-     await db.insert(users).values({
+    await db.insert(users).values({
       name: "Admin",
       email: "admin@admin.dev",
       passwordHash: adminPassword,
@@ -43,13 +43,17 @@ const main = async () => {
           slug: f.uuid(),
           logoUrl: f.valuesFromArray({
             values: [
-              'https://www.shutterstock.com/image-vector/circle-line-simple-design-logo-600nw-2174926871.jpg',
-              'https://img.freepik.com/free-vector/abstract-company-logo_53876-120501.jpg',
-              'https://nuxt.com/assets/design-kit/icon-green.svg',
-              'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Tailwind_CSS_Logo.svg/2560px-Tailwind_CSS_Logo.svg.png'
-            ]
+              "https://www.shutterstock.com/image-vector/circle-line-simple-design-logo-600nw-2174926871.jpg",
+              "https://img.freepik.com/free-vector/abstract-company-logo_53876-120501.jpg",
+              "https://nuxt.com/assets/design-kit/icon-green.svg",
+              "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Tailwind_CSS_Logo.svg/2560px-Tailwind_CSS_Logo.svg.png",
+            ],
           }),
           description: f.loremIpsum(),
+          isPublic: f.weightedRandom([
+            { weight: 0.7, value: f.default({ defaultValue: true }) },
+            { weight: 0.3, value: f.default({ defaultValue: false }) },
+          ]),
           ownerId: f.valuesFromArray({
             values: admins.map(admin => admin.id),
           }),

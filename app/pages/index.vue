@@ -1,7 +1,5 @@
 <script lang="ts" setup>
-
-const { isLoggedIn } = useAuth();
-
+  const { isLoggedIn } = useAuth();
 </script>
 
 <template>
@@ -25,7 +23,14 @@ const { isLoggedIn } = useAuth();
 
       <div class="flex flex-col sm:flex-row gap-4 mb-16">
         <UButton size="xl" class="px-8 py-4" icon="material-symbols:explore"> Explore Workspaces </UButton>
-        <UButton v-if="!isLoggedIn" variant="outline" size="xl" class="px-8 py-4" icon="material-symbols:login" to="/auth/register">
+        <UButton
+          v-if="!isLoggedIn"
+          variant="outline"
+          size="xl"
+          class="px-8 py-4"
+          icon="material-symbols:login"
+          to="/auth/register"
+        >
           Login / Register
         </UButton>
       </div>

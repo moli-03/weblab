@@ -34,6 +34,7 @@ export const workspaces = pgTable("workspaces", {
   logoUrl: varchar("logo_url", { length: 255 }).notNull(),
   description: text("description").notNull(),
   ownerId: uuid("owner_id").notNull().references(() => users.id),
+  isPublic: boolean("is_public").notNull().default(true),
   createdAt: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { mode: "string" }).notNull().defaultNow(),
 }, table => [

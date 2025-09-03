@@ -4,3 +4,4 @@ dist
 docs
 README.md
 server/database/schema.ts
+server/database/migrations
