@@ -6,7 +6,7 @@ import { toPublicUser } from "~~/server/utils/response-sanitizer";
 
 const bodySchema = z.object({
   email: z.email(),
-  password: z.string().min(8),
+  password: z.string().min(1, "Password is required"),
 });
 
 export default defineEventHandler(async event => {

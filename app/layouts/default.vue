@@ -2,10 +2,10 @@
 
 <template>
   <div class="grid grid-rows-[auto_1fr_auto] min-h-screen">
-    <PageHeader />
+    <AppHeader />
     <div class="flex-grow">
       <slot />
     </div>
-    <PageFooter />
+    <AppFooter />
   </div>
 </template>
