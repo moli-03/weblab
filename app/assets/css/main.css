@@ -1,2 +1,9 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
+
+.dark {
+  --ui-primary: var(--color-sky-500);
+
+  --ui-bg: var(--color-zinc-900);
+  --ui-bg-elevated: var(--color-zinc-800);
+}

@@ -1,8 +1,11 @@
 <script lang="ts" setup></script>
 
 <template>
-  <div>
+  <div class="grid grid-rows-[auto_1fr_auto] min-h-screen">
     <PageHeader />
-    <slot />
+    <div class="flex-grow">
+      <slot />
+    </div>
+    <PageFooter />
   </div>
 </template>
