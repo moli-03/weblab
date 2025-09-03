@@ -19,7 +19,7 @@
 
       <div class="flex flex-col sm:flex-row gap-4 mb-16">
         <UButton size="xl" class="px-8 py-4" icon="material-symbols:explore"> Explore Workspaces </UButton>
-        <UButton variant="outline" size="xl" class="px-8 py-4" icon="material-symbols:login">
+        <UButton variant="outline" size="xl" class="px-8 py-4" icon="material-symbols:login" to="/auth/register">
           Login / Register
         </UButton>
       </div>

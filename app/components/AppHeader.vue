@@ -13,7 +13,7 @@
       </div>
 
       <div v-if="!isLoggedIn" class="flex items-center gap-2 ml-auto">
-        <UButton variant="ghost" size="lg" icon="material-symbols:person-add">Sign up</UButton>
+        <UButton variant="ghost" size="lg" icon="material-symbols:person-add" to="/auth/register">Sign up</UButton>
         <UButton size="lg" icon="material-symbols:login" to="/auth/login">Sign in</UButton>
       </div>
       <div v-else-if="user" class="grid grid-cols-[auto_auto] gap-2 items-center">

@@ -2,38 +2,49 @@
   import type { FormSubmitEvent } from "@nuxt/ui";
   import z from "zod";
 
-  const { login } = useAuth();
+  const { register } = useAuth();
 
-  const schema = z.object({
-    email: z.email(),
-    password: z.string().min(1, "Password is required."),
-  });
+  const schema = z
+    .object({
+      email: z.email(),
+      name: z.string().min(2, "Name must be at least 2 characters long."),
+      password: z.string().min(8, "Password must be at least 8 characters long."),
+      confirmPassword: z.string().min(8, "Password must be at least 8 characters long"),
+    })
+    .refine(data => data.password === data.confirmPassword, {
+      error: "Passwords do not match",
+      path: ["confirmPassword"],
+    });
 
   type Schema = z.infer<typeof schema>;
 
   const fields = ref<Schema>({
+    name: "",
     email: "",
     password: "",
+    confirmPassword: "",
   });
 
   function onSubmit(event: FormSubmitEvent<Schema>) {
-    login({
+    register({
       email: event.data.email,
       password: event.data.password,
+      name: event.data.name,
     })
-      .then(user => {
+      .then(() => {
         useToast().add({
-          title: `Welcome back ${user.name}`,
-          description: "You have successfully signed in.",
+          title: "Account created",
+          description: "You can now sign in with your new account.",
           color: "success",
           icon: "i-heroicons-check-circle-solid",
         });
+        navigateTo("/auth/login");
       })
       .catch(error => {
-        console.error("failed to login", error);
+        console.error("failed to register", error);
         useToast().add({
-          title: "Login failed",
-          description: "Please check your credentials.",
+          title: "Couldn't create account",
+          description: "Please review the form, fix any errors, and try again.",
           color: "error",
           icon: "i-heroicons-exclamation-triangle-solid",
         });
@@ -48,14 +59,18 @@
         <div class="space-y-1">
           <h1 class="text-2xl font-semibold flex items-center gap-2">
             <UIcon name="i-heroicons-lock-closed" class="w-6 h-6 text-primary" />
-            <span>Sign in</span>
+            <span>Create account</span>
           </h1>
-          <p class="text-sm text-gray-500 dark:text-gray-400">Enter your credentials to continue</p>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Join us by creating your account</p>
         </div>
       </template>
 
       <UForm :schema="schema" :state="fields" @submit="onSubmit">
         <div class="space-y-4">
+          <UFormField label="Full name" name="name">
+            <UInput v-model="fields.name" icon="i-heroicons-user" size="lg" class="w-full" placeholder="Jane Doe" />
+          </UFormField>
+
           <UFormField label="Email" name="email">
             <UInput
               v-model="fields.email"
@@ -76,23 +91,27 @@
               placeholder="••••••••"
             />
           </UFormField>
+
+          <UFormField label="Confirm Password" name="confirmPassword">
+            <UInput
+              v-model="fields.confirmPassword"
+              type="password"
+              icon="i-heroicons-lock-closed"
+              size="lg"
+              class="w-full"
+              placeholder="••••••••"
+            />
+          </UFormField>
         </div>
         <div class="pt-6">
-          <UButton
-            type="submit"
-            size="lg"
-            block
-            icon="i-heroicons-arrow-right-20-solid"
-            label="Sign in"
-            class="w-full"
-          />
+          <UButton type="submit" size="lg" block icon="i-heroicons-plus" label="Create account" class="w-full" />
         </div>
       </UForm>
 
       <template #footer>
         <p class="text-center text-sm text-gray-500 dark:text-gray-400">
-          Need an account?
-          <NuxtLink to="/auth/register" class="text-primary hover:underline">Sign up</NuxtLink>
+          Already have an account?
+          <NuxtLink to="/auth/login" class="text-primary hover:underline">Sign in</NuxtLink>
         </p>
       </template>
     </UCard>

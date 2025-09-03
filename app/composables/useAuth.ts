@@ -167,7 +167,7 @@ export default function useAuth() {
     return tokenRefreshInterval;
   };
 
-  const login = async (params: LoginParams): Promise<void> => {
+  const login = async (params: LoginParams): Promise<User> => {
     try {
       const response = await $fetch("/api/auth/login", {
         method: "POST",
@@ -184,6 +184,7 @@ export default function useAuth() {
         response.tokens.expiresIn,
       );
       setupTokenRefresh();
+      return response.user;
     } catch (error: unknown) {
       console.error("Login failed:", error);
       throw new Error("Login failed");
