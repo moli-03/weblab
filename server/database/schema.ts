@@ -1,5 +1,5 @@
 import { relations, sql } from "drizzle-orm";
-import {  pgTable, uuid, timestamp, varchar,  primaryKey, uniqueIndex, pgEnum, text, check, inet, boolean } from "drizzle-orm/pg-core";
+import {  pgTable, uuid, timestamp, varchar,  primaryKey, uniqueIndex, pgEnum, text, check, inet, boolean, index } from "drizzle-orm/pg-core";
 
 export const technologyCategory = pgEnum("technology_category", ["technique", "tool", "platform", "framework"]);
 export const technologyRing = pgEnum("technology_ring", ["adopt", "trial", "assess", "hold"]);
@@ -30,9 +30,17 @@ export const loginAudit = pgTable("login_audit", {
 export const workspaces = pgTable("workspaces", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: varchar("name", { length: 255 }).notNull(),
+  slug: varchar("slug", { length: 255 }).notNull(),
+  logoUrl: varchar("logo_url", { length: 255 }).notNull(),
+  description: text("description").notNull(),
+  ownerId: uuid("owner_id").notNull().references(() => users.id),
   createdAt: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { mode: "string" }).notNull().defaultNow(),
-}, table => [uniqueIndex("workspace_name_idx").on(table.name)]);
+}, table => [
+  uniqueIndex("workspace_name_idx").on(table.name),
+  uniqueIndex("workspace_slug_idx").on(table.slug),
+  index("workspace_owner_idx").on(table.ownerId),
+]);
 
 export const workspaceUsers = pgTable("workspace_users", {
   userId: uuid("user_id").notNull().references(() => users.id),
@@ -69,12 +77,18 @@ export const technologies = pgTable("technologies", {
 
 // Relations
 export const userRelations = relations(users, ({ many }) => ({
-    workspaceUsers: many(workspaceUsers),
-    loginAudits: many(loginAudit),
+  workspaceUsers: many(workspaceUsers),
+  loginAudits: many(loginAudit),
+  ownedWorkspaces: many(workspaces),
 }));
 
-export const workspaceRelations = relations(workspaces, ({ many }) => ({
+export const workspaceRelations = relations(workspaces, ({ many, one }) => ({
     workspaceUsers: many(workspaceUsers),
+    owner: one(users, {
+        fields: [workspaces.ownerId],
+        references: [users.id],
+    }),
+    technologies: many(technologies),
 }));
 
 export const userWorkspaceRelations = relations(workspaceUsers, ({ one }) => ({

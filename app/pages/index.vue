@@ -1,3 +1,9 @@
+<script lang="ts" setup>
+
+const { isLoggedIn } = useAuth();
+
+</script>
+
 <template>
   <!-- Hero Section -->
   <section class="bg-gradient-to-br h-full from-sky-900/20 to-sky-600/5 flex items-center">
@@ -19,7 +25,7 @@
 
       <div class="flex flex-col sm:flex-row gap-4 mb-16">
         <UButton size="xl" class="px-8 py-4" icon="material-symbols:explore"> Explore Workspaces </UButton>
-        <UButton variant="outline" size="xl" class="px-8 py-4" icon="material-symbols:login" to="/auth/register">
+        <UButton v-if="!isLoggedIn" variant="outline" size="xl" class="px-8 py-4" icon="material-symbols:login" to="/auth/register">
           Login / Register
         </UButton>
       </div>

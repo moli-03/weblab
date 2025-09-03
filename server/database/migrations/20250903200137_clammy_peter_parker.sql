@@ -51,6 +51,10 @@ CREATE TABLE "workspace_users" (
 CREATE TABLE "workspaces" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" varchar(255) NOT NULL,
+	"slug" varchar(255) NOT NULL,
+	"logo_url" varchar(255) NOT NULL,
+	"description" text NOT NULL,
+	"owner_id" uuid NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
@@ -59,6 +63,9 @@ ALTER TABLE "login_audit" ADD CONSTRAINT "login_audit_user_id_users_id_fk" FOREI
 ALTER TABLE "technologies" ADD CONSTRAINT "technologies_workspace_id_workspaces_id_fk" FOREIGN KEY ("workspace_id") REFERENCES "public"."workspaces"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "workspace_users" ADD CONSTRAINT "workspace_users_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "workspace_users" ADD CONSTRAINT "workspace_users_workspace_id_workspaces_id_fk" FOREIGN KEY ("workspace_id") REFERENCES "public"."workspaces"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "workspaces" ADD CONSTRAINT "workspaces_owner_id_users_id_fk" FOREIGN KEY ("owner_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 CREATE UNIQUE INDEX "workspace_technology_idx" ON "technologies" USING btree ("workspace_id","name");--> statement-breakpoint
 CREATE UNIQUE INDEX "email_idx" ON "users" USING btree ("email");--> statement-breakpoint
-CREATE UNIQUE INDEX "workspace_name_idx" ON "workspaces" USING btree ("name");
+CREATE UNIQUE INDEX "workspace_name_idx" ON "workspaces" USING btree ("name");--> statement-breakpoint
+CREATE UNIQUE INDEX "workspace_slug_idx" ON "workspaces" USING btree ("slug");--> statement-breakpoint
+CREATE INDEX "workspace_owner_idx" ON "workspaces" USING btree ("owner_id");
