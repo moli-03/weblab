@@ -34,6 +34,11 @@ export const refreshTokenPair = (refreshToken: string) => {
   return jwtAuthService.generateTokenPair(context.user.id, context);
 };
 
+export const getUserFromAccessToken = (accessToken: string): PublicUser | null => {
+  const context = jwtAuthService.validateAccessToken(accessToken)?.payload;
+  return context ? context.user : null;
+};
+
 export const hasRoleForRequest = (authContext: AuthContext | null, workspaceId: string, role: UserRole): boolean => {
   if (!authContext) return false;
 

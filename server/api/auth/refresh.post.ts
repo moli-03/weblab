@@ -1,16 +1,28 @@
 import { z } from "zod";
-import { refreshTokenPair } from "~~/server/utils/auth";
+import { getUserFromAccessToken, refreshTokenPair } from "~~/server/utils/auth";
 
 const bodySchema = z.object({
-  refreshToken: z.string(),
+  refreshToken: z.jwt(),
 });
 
 export default defineEventHandler(async event => {
   const { refreshToken } = await readValidatedBody(event, bodySchema.parse);
 
   try {
+    const tokens = refreshTokenPair(refreshToken);
+    const user = getUserFromAccessToken(tokens.accessToken);
+
+    if (user == null) {
+      throw createError({
+        statusCode: 401,
+        statusMessage: "Unauthorized",
+        message: "Invalid access token",
+      });
+    }
+
     return {
-      tokens: refreshTokenPair(refreshToken),
+      tokens,
+      user,
     };
   } catch (error) {
     console.error("Token refresh failed:", error);

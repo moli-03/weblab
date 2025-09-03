@@ -25,9 +25,9 @@ CREATE TABLE "technologies" (
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "published_tech_must_have_ring" CHECK (
-        ("technologies"."status" = 'draft') 
-        OR ("technologies"."status" = 'published' AND "technologies"."ring" IS NOT NULL AND "technologies"."published_at" IS NOT NULL)
-    )
+      ("technologies"."status" = 'draft') 
+      OR ("technologies"."status" = 'published' AND "technologies"."ring" IS NOT NULL AND "technologies"."published_at" IS NOT NULL)
+  )
 );
 --> statement-breakpoint
 CREATE TABLE "users" (
@@ -51,8 +51,8 @@ CREATE TABLE "workspace_users" (
 CREATE TABLE "workspaces" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" varchar(255) NOT NULL,
-	"created_at" timestamp DEFAULT now(),
-	"updated_at" timestamp DEFAULT now()
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 ALTER TABLE "login_audit" ADD CONSTRAINT "login_audit_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint

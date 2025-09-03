@@ -19,6 +19,7 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@iconify-json/material-symbols": "^1.2.33",
     "@nuxt/eslint": "^1.9.0",
     "@nuxt/ui": "^3.3.2",
     "bcrypt": "^6.0.0",

@@ -1,5 +1,5 @@
 {
-  "id": "af201e03-7805-4a90-99f4-76d5a9701acc",
+  "id": "e04a4f75-a818-473a-aa4e-afc1310c6230",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -188,7 +188,7 @@
       "checkConstraints": {
         "published_tech_must_have_ring": {
           "name": "published_tech_must_have_ring",
-          "value": "\n        (\"technologies\".\"status\" = 'draft') \n        OR (\"technologies\".\"status\" = 'published' AND \"technologies\".\"ring\" IS NOT NULL AND \"technologies\".\"published_at\" IS NOT NULL)\n    "
+          "value": "\n      (\"technologies\".\"status\" = 'draft') \n      OR (\"technologies\".\"status\" = 'published' AND \"technologies\".\"ring\" IS NOT NULL AND \"technologies\".\"published_at\" IS NOT NULL)\n  "
         }
       },
       "isRLSEnabled": false
@@ -352,14 +352,14 @@
           "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": "now()"
         },
         "updated_at": {
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": "now()"
         }
       },

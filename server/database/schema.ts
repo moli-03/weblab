@@ -11,58 +11,58 @@ export const users = pgTable("users", {
   name: varchar("last_name", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).notNull(),
   passwordHash: varchar("password_hash", { length: 255 }).notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull()
+  createdAt: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { mode: "string" }).notNull().defaultNow(),
 }, table => [
     uniqueIndex("email_idx").on(table.email)
 ]);
 
 export const loginAudit = pgTable("login_audit", {
-    id: uuid("id").primaryKey().defaultRandom(),
-    userId: uuid("user_id").references(() => users.id),
-    attemptedAt: timestamp("attempted_at").defaultNow().notNull(),
-    ipAddress: inet("ip_address").notNull(),
-    userAgent: text("user_agent").notNull(),
-    loginSuccessful: boolean("login_successful").notNull(),
-    failureReason: varchar("failure_reason", { length: 255 })
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").references(() => users.id),
+  attemptedAt: timestamp("attempted_at").defaultNow().notNull(),
+  ipAddress: inet("ip_address").notNull(),
+  userAgent: text("user_agent").notNull().notNull(),
+  loginSuccessful: boolean("login_successful").notNull(),
+  failureReason: varchar("failure_reason", { length: 255 })
 });
 
 export const workspaces = pgTable("workspaces", {
-    id: uuid("id").primaryKey().defaultRandom(),
-    name: varchar("name", { length: 255 }).notNull(),
-    createdAt: timestamp("created_at").defaultNow(),
-    updatedAt: timestamp("updated_at").defaultNow(),
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: varchar("name", { length: 255 }).notNull(),
+  createdAt: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { mode: "string" }).notNull().defaultNow(),
 }, table => [uniqueIndex("workspace_name_idx").on(table.name)]);
 
 export const workspaceUsers = pgTable("workspace_users", {
-    userId: uuid("user_id").notNull().references(() => users.id),
-    workspaceId: uuid("workspace_id").notNull().references(() => workspaces.id),
-    role: userRole("role").notNull(),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at").defaultNow().notNull()
+  userId: uuid("user_id").notNull().references(() => users.id),
+  workspaceId: uuid("workspace_id").notNull().references(() => workspaces.id),
+  role: userRole("role").notNull(),
+  createdAt: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { mode: "string" }).notNull().defaultNow(),
 }, table => [
     primaryKey({ columns: [table.userId, table.workspaceId] }),
 ]);
 
 export const technologies = pgTable("technologies", {
-    id: uuid("id").primaryKey().defaultRandom(),
-    workspaceId: uuid("workspace_id").notNull().references(() => workspaces.id),
-    name: varchar("name", { length: 255 }).notNull(),
-    category: technologyCategory("category").notNull(),
-    description: text("description").notNull(),
-    ring: technologyRing("ring"),
-    ringDescription: text("ring_description"),
-    status: technologyStatus("status").notNull(),
-    publishedAt: timestamp("published_at"),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at").defaultNow().notNull()
+  id: uuid("id").primaryKey().defaultRandom(),
+  workspaceId: uuid("workspace_id").notNull().references(() => workspaces.id),
+  name: varchar("name", { length: 255 }).notNull(),
+  category: technologyCategory("category").notNull(),
+  description: text("description").notNull(),
+  ring: technologyRing("ring"),
+  ringDescription: text("ring_description"),
+  status: technologyStatus("status").notNull(),
+  publishedAt: timestamp("published_at", { mode: "string" }),
+  createdAt: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { mode: "string" }).notNull().defaultNow(),
 }, table => [
-    // Unique technologies per workspace
-    uniqueIndex("workspace_technology_idx").on(table.workspaceId, table.name),
-    check("published_tech_must_have_ring", sql`
-        (${table.status} = 'draft') 
-        OR (${table.status} = 'published' AND ${table.ring} IS NOT NULL AND ${table.publishedAt} IS NOT NULL)
-    `)
+  // Unique technologies per workspace
+  uniqueIndex("workspace_technology_idx").on(table.workspaceId, table.name),
+  check("published_tech_must_have_ring", sql`
+      (${table.status} = 'draft') 
+      OR (${table.status} = 'published' AND ${table.ring} IS NOT NULL AND ${table.publishedAt} IS NOT NULL)
+  `)
 ]);
 
 
