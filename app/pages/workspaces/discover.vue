@@ -1,4 +1,8 @@
 <script lang="ts" setup>
+  const { setActiveRoute } = useNavigation();
+
+  setActiveRoute("discover");
+
   const {
     data: workspaces,
     error,
@@ -11,13 +15,13 @@
 </script>
 
 <template>
-  <UContainer class="max-w-xl py-12">
-    <header class="mb-6">
+  <UContainer class="max-w-3xl py-12">
+    <div class="mb-6">
       <div class="flex items-center gap-2 flex-wrap">
-        <h1 class="text-2xl font-semibold">Discover workspaces</h1>
+        <h1 class="text-2xl font-semibold">Discover new workspaces</h1>
       </div>
       <p class="mt-1 text-sm text-muted">Public workspaces from the community.</p>
-    </header>
+    </div>
 
     <UAlert
       v-if="error"
@@ -41,7 +45,7 @@
     />
 
     <!-- Skeleton loader -->
-    <div v-if="status === 'pending'" class="space-y-3">
+    <div v-else-if="status === 'pending'" class="space-y-3">
       <USkeleton v-for="i in 4" :key="i" class="h-20" />
     </div>
 

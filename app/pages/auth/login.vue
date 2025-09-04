@@ -2,6 +2,10 @@
   import type { FormSubmitEvent } from "@nuxt/ui";
   import z from "zod";
 
+  definePageMeta({
+    requiresAuth: false,
+  });
+
   const { login } = useAuth();
 
   const schema = z.object({

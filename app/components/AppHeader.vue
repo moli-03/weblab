@@ -7,9 +7,13 @@
     <div class="mx-auto flex flex-wrap md:flex-nowrap items-center gap-5 px-5 py-3">
       <AppIcon size="md" />
 
-      <div class="flex-grow min-w-[240px] leading-tight">
+      <div class="leading-tight">
         <NuxtLink to="/"><h1 class="text-2xl md:text-3xl font-bold tracking-tight">Technology Radar</h1></NuxtLink>
         <p class="text-sm md:text-base text-zinc-400 font-medium">Enterprise Technology Assessment Platform</p>
+      </div>
+
+      <div v-if="isLoggedIn" class="flex-grow flex justify-center">
+        <AppNavigation />
       </div>
 
       <div v-if="!isLoggedIn" class="flex items-center gap-2 ml-auto">
