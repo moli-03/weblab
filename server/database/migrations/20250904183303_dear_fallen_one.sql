@@ -16,6 +16,7 @@ CREATE TABLE "technologies" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"workspace_id" uuid NOT NULL,
 	"name" varchar(255) NOT NULL,
+	"logo_url" varchar(255),
 	"category" "technology_category" NOT NULL,
 	"description" text NOT NULL,
 	"ring" "technology_ring",

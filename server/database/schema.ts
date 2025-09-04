@@ -57,6 +57,7 @@ export const technologies = pgTable("technologies", {
   id: uuid("id").primaryKey().defaultRandom(),
   workspaceId: uuid("workspace_id").notNull().references(() => workspaces.id),
   name: varchar("name", { length: 255 }).notNull(),
+  logoUrl: varchar("logo_url", { length: 255 }),
   category: technologyCategory("category").notNull(),
   description: text("description").notNull(),
   ring: technologyRing("ring"),

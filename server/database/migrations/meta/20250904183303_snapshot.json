@@ -1,5 +1,5 @@
 {
-  "id": "20e6938a-afeb-4b33-9d1f-821b913a9c15",
+  "id": "fef95b1f-fe65-4075-b223-3cabcb79e03f",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -97,6 +97,12 @@
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
+        },
+        "logo_url": {
+          "name": "logo_url",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
         },
         "category": {
           "name": "category",
