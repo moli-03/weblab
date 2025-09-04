@@ -6,3 +6,5 @@ export type User = PublicUser;
 export type WorkspaceWithOwner = Workspace & {
   owner: PublicUser;
 };
+
+export type { Workspace };

@@ -8,7 +8,7 @@
     error,
     refresh: execute,
     status,
-  } = useAuthFetch("/api/workspaces", {
+  } = useAuthFetch("/api/workspaces?joined=false", {
     transform: data => data.entries,
     deep: false,
   });
