@@ -209,6 +209,7 @@ export default function useAuth() {
 
   const logout = async (): Promise<void> => {
     clearAuthData();
+    await navigateTo("/login");
   };
 
   // Get authorization header for API requests
