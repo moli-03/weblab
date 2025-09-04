@@ -1,6 +1,7 @@
 import z from "zod";
 import { db } from "~~/server/database";
 import { requireAuth } from "~~/server/middleware/auth";
+import { getUserWorkspaceProfiles } from "~~/server/utils/auth";
 import { toPublicUser } from "~~/server/utils/response-sanitizer";
 import type { WorkspaceWithOwner } from "~~/shared/types/schema";
 
@@ -22,8 +23,9 @@ export default defineEventHandler(async event => {
     const query = getQuery(event);
     const parsedQuery = queryParamsSchema.parse(query);
 
-    // Build the where conditions
-    const joinedWorkspaceIds = authContext.workspaceProfiles.map(profile => profile.workspaceId);
+    // Get user's workspace memberships
+    const workspaceProfiles = await getUserWorkspaceProfiles(authContext.user.id);
+    const joinedWorkspaceIds = workspaceProfiles.map(profile => profile.workspaceId);
 
     if (parsedQuery.joined && joinedWorkspaceIds.length === 0) {
       // User hasn't joined any workspaces, return empty result

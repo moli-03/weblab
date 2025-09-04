@@ -9,8 +9,8 @@ export default defineEventHandler(async event => {
   const { refreshToken } = await readValidatedBody(event, bodySchema.parse);
 
   try {
-    const tokens = refreshTokenPair(refreshToken);
-    const user = getUserFromAccessToken(tokens.accessToken);
+    const tokens = await refreshTokenPair(refreshToken);
+    const user = await getUserFromAccessToken(tokens.accessToken);
 
     if (user == null) {
       throw createError({

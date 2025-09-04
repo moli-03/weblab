@@ -1,4 +1,4 @@
-import { validateTokenForRequest, hasRoleForRequest, type AuthContext } from "../utils/auth";
+import { validateTokenForRequest, hasRoleForRequest, getUserWorkspaceProfiles, type AuthContext } from "../utils/auth";
 import type { UserRole } from "../database/schema";
 import type { H3Event } from "h3";
 
@@ -20,7 +20,7 @@ export default defineEventHandler(async event => {
   }
 
   const token = authHeader.substring(7);
-  const authContext = validateTokenForRequest(token);
+  const authContext = await validateTokenForRequest(token);
 
   event.context.auth = authContext;
 });
@@ -43,9 +43,10 @@ export const requireAuth = (event: H3Event): AuthContext => {
   return authContext;
 };
 
-export const requireMembership = (event: H3Event, workspaceId: string): AuthContext => {
+export const requireMembership = async (event: H3Event, workspaceId: string): Promise<AuthContext> => {
   const authContext = requireAuth(event);
-  const isMember = authContext.workspaceProfiles.some(profile => profile.workspaceId === workspaceId);
+  const workspaceProfiles = await getUserWorkspaceProfiles(authContext.user.id);
+  const isMember = workspaceProfiles.some(profile => profile.workspaceId === workspaceId);
   if (!isMember) {
     throw createError({
       statusCode: 403,
@@ -57,10 +58,10 @@ export const requireMembership = (event: H3Event, workspaceId: string): AuthCont
   return authContext;
 };
 
-export const requireRole = (event: H3Event, workspaceId: string, requiredRole: UserRole): AuthContext => {
+export const requireRole = async (event: H3Event, workspaceId: string, requiredRole: UserRole): Promise<AuthContext> => {
   const authContext = requireAuth(event);
 
-  const hasRequiredRole = hasRoleForRequest(authContext, workspaceId, requiredRole);
+  const hasRequiredRole = await hasRoleForRequest(authContext, workspaceId, requiredRole);
 
   if (!hasRequiredRole) {
     throw createError({
@@ -73,10 +74,11 @@ export const requireRole = (event: H3Event, workspaceId: string, requiredRole: U
   return authContext;
 };
 
-export const requireAdmin = (event: H3Event): AuthContext => {
+export const requireAdmin = async (event: H3Event): Promise<AuthContext> => {
   const authContext = requireAuth(event);
 
-  const isAdmin = authContext.workspaceProfiles.some(profile => profile.role === "admin");
+  const workspaceProfiles = await getUserWorkspaceProfiles(authContext.user.id);
+  const isAdmin = workspaceProfiles.some(profile => profile.role === "admin");
 
   if (!isAdmin) {
     throw createError({
@@ -98,9 +100,10 @@ export const getCurrentUserId = (event: H3Event): string => {
   return authContext.user.id;
 };
 
-export const hasWorkspaceAccess = (event: H3Event, workspaceId: string): boolean => {
+export const hasWorkspaceAccess = async (event: H3Event, workspaceId: string): Promise<boolean> => {
   const authContext = getAuthContext(event);
   if (!authContext) return false;
 
-  return authContext.workspaceProfiles.some(profile => profile.workspaceId === workspaceId);
+  const workspaceProfiles = await getUserWorkspaceProfiles(authContext.user.id);
+  return workspaceProfiles.some(profile => profile.workspaceId === workspaceId);
 };

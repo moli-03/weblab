@@ -11,7 +11,7 @@ export default defineEventHandler(async event => {
     const params = getRouterParams(event);
     const { id: workspaceId } = schema.parse(params);
 
-    requireMembership(event, workspaceId);
+    await requireMembership(event, workspaceId);
 
     const workspace = await db.query.workspaces.findFirst({
       where: (table, { eq }) => eq(table.id, workspaceId),

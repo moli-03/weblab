@@ -13,7 +13,7 @@ export default defineEventHandler(async event => {
     const { id: workspaceId } = paramsSchema.parse(params);
 
     // Ensure caller is at least a member
-    requireMembership(event, workspaceId);
+    await requireMembership(event, workspaceId);
 
     const members = await db.query.workspaceMembers.findMany({
       where: (wm, { eq }) => eq(wm.workspaceId, workspaceId),

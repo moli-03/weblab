@@ -1,48 +1,82 @@
 import { db } from "../database";
-import type { User, UserRole, WorkspaceMember } from "../database/schema";
+import type { User, UserRole } from "../database/schema";
 import { loginAudit } from "../database/schema";
 import { createJwtAuthService } from "../security/jwt-auth";
 import { toPublicUser, type PublicUser } from "./response-sanitizer";
 
 export interface AuthContext {
   user: PublicUser;
-  workspaceProfiles: WorkspaceMember[];
 }
 
 export const jwtAuthService = createJwtAuthService<AuthContext>();
 
-export const validateTokenForRequest = (token: string): AuthContext | null => {
-  return jwtAuthService.validateAccessToken(token)?.payload ?? null;
+export const validateTokenForRequest = async (token: string): Promise<AuthContext | null> => {
+  const tokenPayload = jwtAuthService.validateAccessToken(token)?.payload;
+  if (!tokenPayload) {
+    return null;
+  }
+
+  // Re-validate user exists in database
+  const user = await db.query.users.findFirst({
+    where: (users, { eq }) => eq(users.id, tokenPayload.user.id),
+  });
+
+  if (!user) {
+    return null;
+  }
+
+  return {
+    user: toPublicUser(user),
+  };
 };
 
 export const generateTokenPair = async (user: User) => {
   const context: AuthContext = {
     user: toPublicUser(user),
-    workspaceProfiles: await db.query.workspaceMembers.findMany({
-      where: (wm, { eq }) => eq(wm.userId, user.id),
-    }),
   };
 
   return jwtAuthService.generateTokenPair(user.id, context);
 };
 
-export const refreshTokenPair = (refreshToken: string) => {
+export const refreshTokenPair = async (refreshToken: string) => {
   const context = jwtAuthService.validateRefreshToken(refreshToken)?.payload;
   if (!context) {
     throw new Error("Invalid refresh token");
   }
-  return jwtAuthService.generateTokenPair(context.user.id, context);
+
+  // Re-validate user exists in database
+  const user = await db.query.users.findFirst({
+    where: (users, { eq }) => eq(users.id, context.user.id),
+  });
+
+  if (!user) {
+    throw new Error("User no longer exists");
+  }
+
+  // Generate new token pair with fresh user data
+  const updatedContext: AuthContext = {
+    user: toPublicUser(user),
+  };
+
+  return jwtAuthService.generateTokenPair(context.user.id, updatedContext);
 };
 
-export const getUserFromAccessToken = (accessToken: string): PublicUser | null => {
-  const context = jwtAuthService.validateAccessToken(accessToken)?.payload;
+export const getUserFromAccessToken = async (accessToken: string): Promise<PublicUser | null> => {
+  const context = await validateTokenForRequest(accessToken);
   return context ? context.user : null;
 };
 
-export const hasRoleForRequest = (authContext: AuthContext | null, workspaceId: string, role: UserRole): boolean => {
+export const getUserWorkspaceProfiles = async (userId: string) => {
+  return await db.query.workspaceMembers.findMany({
+    where: (wm, { eq }) => eq(wm.userId, userId),
+  });
+};
+
+export const hasRoleForRequest = async (authContext: AuthContext | null, workspaceId: string, role: UserRole): Promise<boolean> => {
   if (!authContext) return false;
 
-  return authContext.workspaceProfiles.some(profile => profile.workspaceId === workspaceId && profile.role === role);
+  const workspaceProfiles = await getUserWorkspaceProfiles(authContext.user.id);
+  return workspaceProfiles.some(profile => profile.workspaceId === workspaceId && profile.role === role);
 };
 
 export const auditLogin = async (
