@@ -99,7 +99,7 @@
   useHead(() => ({ title: pageTitle.value }));
 
   // Derived state
-  const isOwner = computed(() => workspace.value && user.value?.id === workspace.value.ownerId);
+  const isOwner = computed(() => (workspace.value && user.value?.id === workspace.value.ownerId) || false);
   const isAdmin = computed(() => workspace.value && workspace.value.memberRole === "admin");
 
   // Breadcrumbs for UBreadcrumb (Nuxt UI expects label + optional to)
@@ -107,9 +107,6 @@
     { label: "Workspaces", to: "/workspaces" },
     { label: workspace.value ? workspace.value.name : "Loading" },
   ]);
-
-  // Refresh after hero join/leave
-  const handleHeroUpdated = () => refresh();
 </script>
 
 <template>
@@ -130,7 +127,7 @@
     <template v-else-if="status === 'success' && workspace">
       <div class="flex flex-col gap-8">
         <!-- Header / Hero extracted to component -->
-        <WorkspaceHero :workspace="workspace" :is-owner="isOwner" @updated="handleHeroUpdated" />
+        <WorkspaceHero :workspace="workspace" :is-owner="isOwner" @joined="refresh" @left="navigateTo('/workspaces')" />
 
         <!-- Main Content Grid -->
         <div class="mt-2 grid gap-10 border-t border-gray-800 pt-8">

@@ -9,7 +9,7 @@
 
   const props = defineProps<Props>();
   const emit = defineEmits<{
-    (e: "updated"): void;
+    (e: "joined" | "left"): void;
   }>();
 
   const { $authFetch } = useNuxtApp();
@@ -31,10 +31,10 @@
       toast.add({
         title: "Joined workspace",
         icon: "material-symbols:check-circle",
-        description: `You have successfully joined "${props.workspace.name}"`,
+        description: `You have joined "${props.workspace.name}"`,
         color: "success",
       });
-      emit("updated");
+      emit("joined");
     } catch (error) {
       console.error("Failed to join workspace:", error);
       toast.add({
@@ -57,9 +57,9 @@
         title: "Left workspace",
         icon: "material-symbols:logout",
         description: `You have left "${props.workspace.name}"`,
-        color: "neutral",
+        color: "success",
       });
-      emit("updated");
+      emit("left");
     } catch (error) {
       console.error("Failed to leave workspace:", error);
     } finally {

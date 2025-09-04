@@ -36,7 +36,7 @@
       useToast().add({
         title: "Joined workspace",
         icon: "material-symbols:check-circle",
-        description: `You have successfully joined the workspace "${props.workspace.name}".`,
+        description: `You have joined "${props.workspace.name}".`,
         color: "success",
       });
 
