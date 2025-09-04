@@ -10,10 +10,13 @@ const main = async () => {
     console.log("Seeding database...");
 
     await reset(db, { workspaceMembers, technologies, users, workspaces, loginAudit });
+    console.log("Database reset complete");
 
-    await seeders.users(db);
-    await seeders.workspaces(db);
-    await seeders.technologies(db);
+    const seedGen = new Date().getTime();
+
+    await seeders.users(db, seedGen);
+    await seeders.workspaces(db, seedGen);
+    await seeders.technologies(db, seedGen);
 
     console.log("Database seeding complete");
     process.exit(0);

@@ -2,9 +2,7 @@ import z from "zod";
 import { db } from "~~/server/database";
 import { requireAuth } from "~~/server/middleware/auth";
 
-const paramsSchema = z.object({
-  id: z.uuid(),
-});
+const paramsSchema = z.object({ id: z.uuid() });
 
 export default defineEventHandler(async event => {
   const authContext = requireAuth(event);
@@ -28,10 +26,15 @@ export default defineEventHandler(async event => {
       });
     }
 
+    const workspaceMembership = await db.query.workspaceMembers.findFirst({
+      where: (wm, { eq, and }) => and(eq(wm.workspaceId, workspaceId), eq(wm.userId, authContext.user.id)),
+    });
+
     return {
       ...workspace,
       owner: toPublicUser(workspace.owner),
-      isJoined: authContext.workspaceProfiles.some(profile => profile.workspaceId === workspace.id),
+      isJoined: workspaceMembership !== null,
+      memberRole: workspaceMembership?.role
     };
   } catch (error) {
     // Check if it's an HTTP error from createError

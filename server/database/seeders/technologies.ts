@@ -212,7 +212,7 @@ const seedTechnologies: Omit<NewTechnology, "workspaceId" | "status">[] = [
   { name: "Event Sourcing", category: "technique", description: "Persist state as a sequence of domain events." },
 ];
 
-export default async function execute(db: DB) {
+export default async function execute(db: DB, _seedGen: number) {
   const workspaces = await db.query.workspaces.findMany();
   if (workspaces.length === 0) {
     console.warn("No workspaces found. Skipping technologies seeding.");

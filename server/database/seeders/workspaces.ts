@@ -2,15 +2,16 @@ import { seed } from "drizzle-seed";
 import type { DB } from "..";
 import { type NewWorkspaceMember, workspaces, workspaceMembers } from "../schema";
 
-export default async function execute(db: DB) {
+export default async function execute(db: DB, seedGen: number) {
   const nWorkspaces: number = 5;
 
   const allUsers = await db.query.users.findMany();
 
-  await seed(db, { workspaces }).refine(f => ({
+  await seed(db, { workspaces }, { seed: seedGen }).refine(f => ({
     workspaces: {
       count: nWorkspaces,
       columns: {
+        id: f.default({ defaultValue: undefined }),
         name: f.companyName(),
         slug: f.uuid(),
         logoUrl: f.valuesFromArray({

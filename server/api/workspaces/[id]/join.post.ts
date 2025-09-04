@@ -57,6 +57,7 @@ export default defineEventHandler(async event => {
       message: "Successfully joined workspace",
     };
   } catch (error: unknown) {
+    console.error("Error in POST /api/workspaces/[id]/join:", error);
     // Check if it's an HTTP error from createError
     if (error && typeof error === "object" && "statusCode" in error) {
       throw error;

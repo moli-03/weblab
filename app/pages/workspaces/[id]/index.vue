@@ -2,8 +2,6 @@
   import type { BreadcrumbItem, ToastProps } from "@nuxt/ui";
   import z from "zod";
   import type { WorkspaceWithOwner } from "~~/shared/types/schema";
-  import type { PublicUser } from "~~/server/utils/response-sanitizer";
-  import type { WorkspaceMember } from "~~/server/database/schema";
 
   const { $authFetch } = useNuxtApp();
   const { user } = useAuth();
@@ -97,6 +95,7 @@
 
   // Derived state
   const isOwner = computed(() => workspace.value && user.value?.id === workspace.value.ownerId);
+  const isAdmin = computed(() => workspace.value && workspace.value.memberRole === "admin")
 
   // Breadcrumbs for UBreadcrumb (Nuxt UI expects label + optional to)
   const breadcrumbs = computed<BreadcrumbItem[]>(() => [
@@ -126,7 +125,7 @@
     <template v-else-if="status === 'success' && workspace">
       <div class="flex flex-col gap-8">
         <!-- Header / Hero extracted to component -->
-        <WorkspaceHero :workspace="workspace" :is-owner="Boolean(isOwner)" @updated="handleHeroUpdated" />
+        <WorkspaceHero :workspace="workspace" :is-owner="isOwner" @updated="handleHeroUpdated" />
 
         <!-- Main Content Grid -->
         <div class="mt-2 grid gap-10 border-t border-gray-800 pt-8">
@@ -179,7 +178,7 @@
                 <h2 class="text-lg font-semibold tracking-tight flex items-center gap-2">
                   <UIcon name="material-symbols:hub" class="text-xl text-primary" /> Technologies
                 </h2>
-                <UButton v-if="isOwner" size="xs" icon="material-symbols:add" variant="subtle" label="Add" disabled />
+                <UButton v-if="isAdmin" size="xs" icon="material-symbols:add" variant="subtle" label="Add" />
               </div>
               <div>
                 <!-- Loading -->
@@ -196,7 +195,7 @@
                     title="No technologies yet"
                     description="Once added, technologies will appear here organized in groups."
                   >
-                    <UButton v-if="isOwner" icon="material-symbols:add" label="Add technology" size="sm" disabled />
+                    <UButton v-if="isAdmin" icon="material-symbols:add" label="Add technology" size="sm" />
                   </AppEmptyState>
                 </div>
                 <!-- Content -->
@@ -214,12 +213,11 @@
                 <UIcon name="material-symbols:group" class="text-xl text-primary" /> Members
               </h2>
               <UButton
-                v-if="isOwner"
+                v-if="isAdmin"
                 size="xs"
                 icon="material-symbols:person-add"
                 variant="ghost"
                 label="Invite"
-                disabled
               />
             </div>
             <div v-if="membersStatus === 'pending'" class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -233,13 +231,6 @@
             </ul>
           </section>
         </div>
-      </div>
-    </template>
-
-    <template v-else>
-      <div class="text-center py-20">
-        <p class="text-lg font-medium">Workspace not available.</p>
-        <UButton to="/workspaces" class="mt-6" label="Back to workspaces" icon="material-symbols:arrow-back" />
       </div>
     </template>
   </UContainer>
