@@ -21,34 +21,40 @@
 
   const accordionItems = computed<ExtendedAccordionItem[]>(() => [
     {
-      label: "Techniques",
-      slot: "technique",
-      icon: "i-heroicons-cog-6-tooth",
-      techniques: getTechniquesForCategory("technique"),
+      label: "Frameworks",
+      slot: "framework",
+      icon: "material-symbols:view-in-ar",
+      techniques: getTechniquesForCategory("framework"),
     },
     {
       label: "Tools",
       slot: "tool",
-      icon: "i-heroicons-wrench",
+      icon: "material-symbols:build",
       techniques: getTechniquesForCategory("tool"),
+    },
+    {
+      label: "Techniques",
+      slot: "technique",
+      icon: "material-symbols:lightbulb",
+      techniques: getTechniquesForCategory("technique"),
     },
     {
       label: "Platforms",
       slot: "platform",
-      icon: "i-heroicons-server",
+      icon: "material-symbols:cloud",
       techniques: getTechniquesForCategory("platform"),
-    },
-    {
-      label: "Frameworks",
-      slot: "framework",
-      icon: "i-heroicons-cube",
-      techniques: getTechniquesForCategory("framework"),
     },
   ]);
 </script>
 
 <template>
-  <UAccordion :multiple="multiple" :items="accordionItems">
+  <UAccordion
+    :multiple="multiple"
+    :items="accordionItems"
+    :ui="{
+      label: 'text-xl font-semibold',
+    }"
+  >
     <template #trailing="{ open, item }">
       <div class="flex justify-between w-full">
         <UBadge
@@ -65,8 +71,8 @@
       </div>
     </template>
     <template v-for="item in accordionItems" :key="item.slot" #[item.slot]>
-      <div class="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        <TechnologyCard v-for="tech in item.techniques" :key="tech.id" :technology="tech" />
+      <div class="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 py-2">
+        <TechnologyCard v-for="tech in item.techniques" :key="tech.id" :technology="tech" class="h-fit" />
       </div>
     </template>
   </UAccordion>

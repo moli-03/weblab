@@ -113,13 +113,8 @@
 
         <!-- Placeholder for future content -->
         <section
-          class="mt-2 pt-8 border-t border-gray-200 dark:border-gray-800 min-h-40"
-          aria-label="Workspace extended content"
+          class="mt-2 pt-8 border-t border-gray-800 min-h-40"
         >
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-lg font-semibold tracking-tight">Technologies</h2>
-            <UButton v-if="isOwner" size="xs" icon="material-symbols:add" variant="ghost" label="Add" disabled />
-          </div>
 
           <!-- Technologies Loading -->
           <div
