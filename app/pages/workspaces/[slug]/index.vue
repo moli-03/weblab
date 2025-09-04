@@ -2,20 +2,17 @@
   import type { BreadcrumbItem, ToastProps } from "@nuxt/ui";
   import z from "zod";
   import type { WorkspaceWithOwner } from "~~/shared/types/schema";
+  import { FetchError } from "ofetch";
 
   const { $authFetch } = useNuxtApp();
   const { user } = useAuth();
   const toast = useToast();
 
   // Validate route param which can be UUID (id) or slug
-  const uuidSchema = z.object({ id: z.uuid() });
-  const slugSchema = z.object({ id: z.string() });
+  const slugSchema = z.object({ slug: z.string() });
 
   const route = useRoute();
-  const uuidParams = uuidSchema.safeParse(route.params);
   const slugParams = slugSchema.safeParse(route.params);
-
-  let fetchType: "id" | "slug" | null = null;
 
   const notFoundToast: ToastProps = {
     title: "Workspace not found",
@@ -24,11 +21,7 @@
     color: "error",
   };
 
-  if (uuidParams.success) {
-    fetchType = "id";
-  } else if (slugParams.success) {
-    fetchType = "slug";
-  } else {
+  if (!slugParams.success) {
     toast.add(notFoundToast);
     await navigateTo("/workspaces");
     throw new Error("Invalid workspace identifier");
@@ -53,16 +46,28 @@
     data: workspace,
     status,
     refresh,
-  } = useAsyncData<WorkspaceWithOwner>("workspace-detail", async () => {
-    let id: string | null = null;
+  } = useAsyncData<WorkspaceWithOwner | null>("workspace-detail", async () => {
+    const { slug } = slugParams.data;
+    try {
+      const id = await getWorkspaceIdBySlug(slug);
+      return await $authFetch(`/api/workspaces/${id}`);
+    } catch (error: unknown) {
+      console.error("Failed to fetch workspace details:", error);
 
-    if (fetchType === "id" && uuidParams.success) {
-      id = uuidParams.data.id;
-    } else if (fetchType === "slug" && slugParams.success) {
-      const { id: slug } = slugParams.data;
-      id = await getWorkspaceIdBySlug(slug);
+      if (error instanceof FetchError && error.response?.status === 403) {
+        toast.add({
+          title: "Access denied",
+          icon: "material-symbols:lock",
+          description: "You do not have permission to view this workspace.",
+          color: "error",
+        });
+      } else {
+        toast.add(notFoundToast);
+      }
+
+      await navigateTo("/workspaces");
+      return null;
     }
-    return await $authFetch(`/api/workspaces/${id}`);
   });
 
   const { data: technologies, status: techStatus } = useAsyncData(
@@ -95,7 +100,7 @@
 
   // Derived state
   const isOwner = computed(() => workspace.value && user.value?.id === workspace.value.ownerId);
-  const isAdmin = computed(() => workspace.value && workspace.value.memberRole === "admin")
+  const isAdmin = computed(() => workspace.value && workspace.value.memberRole === "admin");
 
   // Breadcrumbs for UBreadcrumb (Nuxt UI expects label + optional to)
   const breadcrumbs = computed<BreadcrumbItem[]>(() => [
@@ -212,13 +217,7 @@
               <h2 class="text-lg font-semibold tracking-tight flex items-center gap-2">
                 <UIcon name="material-symbols:group" class="text-xl text-primary" /> Members
               </h2>
-              <UButton
-                v-if="isAdmin"
-                size="xs"
-                icon="material-symbols:person-add"
-                variant="ghost"
-                label="Invite"
-              />
+              <UButton v-if="isAdmin" size="xs" icon="material-symbols:person-add" variant="ghost" label="Invite" />
             </div>
             <div v-if="membersStatus === 'pending'" class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               <USkeleton v-for="n in 3" :key="n" class="h-14" />

@@ -9,7 +9,6 @@ const paramsSchema = z.object({ id: z.uuid() });
 export default defineEventHandler(async event => {
   try {
     const params = getRouterParams(event);
-    console.log(params);
     const { id: workspaceId } = paramsSchema.parse(params);
 
     // Ensure caller is at least a member

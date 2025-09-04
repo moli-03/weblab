@@ -58,7 +58,11 @@ export const requireMembership = async (event: H3Event, workspaceId: string): Pr
   return authContext;
 };
 
-export const requireRole = async (event: H3Event, workspaceId: string, requiredRole: UserRole): Promise<AuthContext> => {
+export const requireRole = async (
+  event: H3Event,
+  workspaceId: string,
+  requiredRole: UserRole,
+): Promise<AuthContext> => {
   const authContext = requireAuth(event);
 
   const hasRequiredRole = await hasRoleForRequest(authContext, workspaceId, requiredRole);

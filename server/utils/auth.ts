@@ -72,7 +72,11 @@ export const getUserWorkspaceProfiles = async (userId: string) => {
   });
 };
 
-export const hasRoleForRequest = async (authContext: AuthContext | null, workspaceId: string, role: UserRole): Promise<boolean> => {
+export const hasRoleForRequest = async (
+  authContext: AuthContext | null,
+  workspaceId: string,
+  role: UserRole,
+): Promise<boolean> => {
   if (!authContext) return false;
 
   const workspaceProfiles = await getUserWorkspaceProfiles(authContext.user.id);

@@ -1,6 +1,6 @@
 import z from "zod";
 import { db } from "~~/server/database";
-import { requireAuth } from "~~/server/middleware/auth";
+import { requireAuth, requireMembership } from "~~/server/middleware/auth";
 
 const paramsSchema = z.object({ id: z.uuid() });
 
@@ -26,6 +26,8 @@ export default defineEventHandler(async event => {
       });
     }
 
+    await requireMembership(event, workspaceId);
+
     const workspaceMembership = await db.query.workspaceMembers.findFirst({
       where: (wm, { eq, and }) => and(eq(wm.workspaceId, workspaceId), eq(wm.userId, authContext.user.id)),
     });
@@ -34,7 +36,7 @@ export default defineEventHandler(async event => {
       ...workspace,
       owner: toPublicUser(workspace.owner),
       isJoined: workspaceMembership !== null,
-      memberRole: workspaceMembership?.role
+      memberRole: workspaceMembership?.role,
     };
   } catch (error) {
     // Check if it's an HTTP error from createError
