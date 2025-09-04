@@ -6,4 +6,4 @@ export default {
   users: executeUsers,
   workspaces: executeWorkspaces,
   technologies: executeTechnologies,
-}
+};

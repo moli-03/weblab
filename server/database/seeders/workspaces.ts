@@ -3,7 +3,6 @@ import type { DB } from "..";
 import { type NewWorkspaceUser, workspaces, workspaceUsers } from "../schema";
 
 export default async function execute(db: DB) {
-
   const nWorkspaces: number = 5;
 
   const allUsers = await db.query.users.findMany();

@@ -93,6 +93,13 @@ export const workspaceRelations = relations(workspaces, ({ many, one }) => ({
     technologies: many(technologies),
 }));
 
+export const technologyRelations = relations(technologies, ({ one }) => ({
+    workspace: one(workspaces, {
+        fields: [technologies.workspaceId],
+        references: [workspaces.id],
+    }),
+}));
+
 export const userWorkspaceRelations = relations(workspaceUsers, ({ one }) => ({
     user: one(users, {
         fields: [workspaceUsers.userId],

@@ -43,6 +43,20 @@ export const requireAuth = (event: H3Event): AuthContext => {
   return authContext;
 };
 
+export const requireMembership = (event: H3Event, workspaceId: string): AuthContext => {
+  const authContext = requireAuth(event);
+  const isMember = authContext.workspaceProfiles.some(profile => profile.workspaceId === workspaceId);
+  if (!isMember) {
+    throw createError({
+      statusCode: 403,
+      statusMessage: "Forbidden",
+      message: `Membership required in workspace: ${workspaceId}`,
+    });
+  }
+
+  return authContext;
+};
+
 export const requireRole = (event: H3Event, workspaceId: string, requiredRole: UserRole): AuthContext => {
   const authContext = requireAuth(event);
 

@@ -55,6 +55,7 @@
     refresh,
   } = useAsyncData<WorkspaceWithOwner>("workspace-detail", async () => {
     let id: string | null = null;
+
     if (fetchType === "id" && uuidParams.success) {
       id = uuidParams.data.id;
     } else if (fetchType === "slug" && slugParams.success) {
@@ -63,6 +64,16 @@
     }
     return await $authFetch(`/api/workspaces/${id}`);
   });
+
+  const { data: technologies, status: techStatus } = useAsyncData(
+    async () => {
+      if (workspace.value) {
+        return await $authFetch(`/api/workspaces/${workspace.value.id}/technologies`);
+      }
+      return [];
+    },
+    { immediate: false, watch: [workspace] },
+  );
 
   // SEO Title
   const pageTitle = computed(() => (workspace.value ? `${workspace.value.name} – Workspace` : "Workspace"));
@@ -105,8 +116,34 @@
           class="mt-2 pt-8 border-t border-gray-200 dark:border-gray-800 min-h-40"
           aria-label="Workspace extended content"
         >
-          <p class="text-sm text-muted mb-4">More workspace content will appear here.</p>
-          <!-- Intentionally left space for future modules (e.g., technologies, members, activity) -->
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold tracking-tight">Technologies</h2>
+            <UButton v-if="isOwner" size="xs" icon="material-symbols:add" variant="ghost" label="Add" disabled />
+          </div>
+
+          <!-- Technologies Loading -->
+          <div
+            v-if="techStatus === 'pending'"
+            class="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+          >
+            <div v-for="n in 4" :key="n" class="h-40 rounded-lg bg-gray-100 dark:bg-gray-900 animate-pulse" />
+          </div>
+
+          <!-- Empty State -->
+          <div v-else-if="techStatus === 'success' && technologies && technologies.length === 0">
+            <AppEmptyState
+              icon="material-symbols:hub"
+              title="No technologies yet"
+              description="Once added, technologies will appear here organized in a neat grid."
+            >
+              <UButton v-if="isOwner" icon="material-symbols:add" label="Add technology" size="sm" disabled />
+            </AppEmptyState>
+          </div>
+
+          <!-- Grouped Technologies extracted component -->
+          <div v-else-if="!!technologies">
+            <TechnologyGroups :technologies="technologies" />
+          </div>
         </section>
       </div>
     </template>
