@@ -1,6 +1,6 @@
 import z from "zod";
 import { db } from "~~/server/database";
-import { workspaces, workspaceUsers } from "~~/server/database/schema";
+import { workspaces, workspaceMembers } from "~~/server/database/schema";
 import { requireAuth } from "~~/server/middleware/auth";
 import { eq, and } from "drizzle-orm";
 
@@ -35,8 +35,8 @@ export default defineEventHandler(async event => {
     }
 
     // Check if user is already a member
-    const existingMember = await db.query.workspaceUsers.findFirst({
-      where: and(eq(workspaceUsers.userId, authContext.user.id), eq(workspaceUsers.workspaceId, workspaceId)),
+    const existingMember = await db.query.workspaceMembers.findFirst({
+      where: and(eq(workspaceMembers.userId, authContext.user.id), eq(workspaceMembers.workspaceId, workspaceId)),
     });
 
     if (existingMember) {
@@ -47,7 +47,7 @@ export default defineEventHandler(async event => {
     }
 
     // Add user to workspace
-    await db.insert(workspaceUsers).values({
+    await db.insert(workspaceMembers).values({
       userId: authContext.user.id,
       workspaceId: workspaceId,
       role: "customer",

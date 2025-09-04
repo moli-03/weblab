@@ -29,8 +29,8 @@
     [
       sizeConf.value.placeholder,
       sizeConf.value.rounded,
-      "flex items-center justify-center bg-primary-100 dark:bg-primary-900/40",
-      "text-primary-600 dark:text-primary-300 font-semibold select-none",
+      "flex items-center justify-center bg-primary-100 bg-primary-900/40",
+      "text-primary-600 text-primary-300 font-semibold select-none",
       sizeConf.value.text,
     ].join(" "),
   );

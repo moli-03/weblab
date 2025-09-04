@@ -1,6 +1,6 @@
 import z from "zod";
 import { db } from "~~/server/database";
-import { workspaces, workspaceUsers } from "~~/server/database/schema";
+import { workspaces, workspaceMembers } from "~~/server/database/schema";
 import { requireAuth } from "~~/server/middleware/auth";
 import { eq, and } from "drizzle-orm";
 
@@ -36,8 +36,8 @@ export default defineEventHandler(async event => {
     }
 
     // Check if user is a member
-    const membership = await db.query.workspaceUsers.findFirst({
-      where: and(eq(workspaceUsers.userId, authContext.user.id), eq(workspaceUsers.workspaceId, workspaceId)),
+    const membership = await db.query.workspaceMembers.findFirst({
+      where: and(eq(workspaceMembers.userId, authContext.user.id), eq(workspaceMembers.workspaceId, workspaceId)),
     });
 
     if (!membership) {
@@ -49,8 +49,8 @@ export default defineEventHandler(async event => {
 
     // Remove user from workspace
     await db
-      .delete(workspaceUsers)
-      .where(and(eq(workspaceUsers.userId, authContext.user.id), eq(workspaceUsers.workspaceId, workspaceId)));
+      .delete(workspaceMembers)
+      .where(and(eq(workspaceMembers.userId, authContext.user.id), eq(workspaceMembers.workspaceId, workspaceId)));
 
     return {
       message: "Successfully left workspace",

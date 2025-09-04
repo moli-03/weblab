@@ -1,5 +1,5 @@
 import { db } from "~~/server/database";
-import { workspaces, workspaceUsers } from "~~/server/database/schema";
+import { workspaces, workspaceMembers } from "~~/server/database/schema";
 import { requireAuth } from "~~/server/middleware/auth";
 import { z } from "zod";
 
@@ -54,7 +54,7 @@ export default defineEventHandler(async event => {
       .returning();
 
     // Add the creator as an admin member of the workspace
-    await db.insert(workspaceUsers).values({
+    await db.insert(workspaceMembers).values({
       userId: user.user.id,
       workspaceId: newWorkspace.id,
       role: "admin",

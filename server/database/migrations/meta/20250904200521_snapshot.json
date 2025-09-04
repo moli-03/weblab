@@ -1,5 +1,5 @@
 {
-  "id": "fef95b1f-fe65-4075-b223-3cabcb79e03f",
+  "id": "30a7480c-bc16-4e85-a6fe-1aee7fb6632a",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -275,8 +275,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.workspace_users": {
-      "name": "workspace_users",
+    "public.workspace_members": {
+      "name": "workspace_members",
       "schema": "",
       "columns": {
         "user_id": {
@@ -315,9 +315,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "workspace_users_user_id_users_id_fk": {
-          "name": "workspace_users_user_id_users_id_fk",
-          "tableFrom": "workspace_users",
+        "workspace_members_user_id_users_id_fk": {
+          "name": "workspace_members_user_id_users_id_fk",
+          "tableFrom": "workspace_members",
           "tableTo": "users",
           "columnsFrom": [
             "user_id"
@@ -328,9 +328,9 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "workspace_users_workspace_id_workspaces_id_fk": {
-          "name": "workspace_users_workspace_id_workspaces_id_fk",
-          "tableFrom": "workspace_users",
+        "workspace_members_workspace_id_workspaces_id_fk": {
+          "name": "workspace_members_workspace_id_workspaces_id_fk",
+          "tableFrom": "workspace_members",
           "tableTo": "workspaces",
           "columnsFrom": [
             "workspace_id"
@@ -343,8 +343,8 @@
         }
       },
       "compositePrimaryKeys": {
-        "workspace_users_user_id_workspace_id_pk": {
-          "name": "workspace_users_user_id_workspace_id_pk",
+        "workspace_members_user_id_workspace_id_pk": {
+          "name": "workspace_members_user_id_workspace_id_pk",
           "columns": [
             "user_id",
             "workspace_id"

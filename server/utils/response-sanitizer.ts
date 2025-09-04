@@ -1,8 +1,8 @@
-import type { User, WorkspaceUser } from "../database/schema";
+import type { User, WorkspaceMember } from "../database/schema";
 
 export type PublicUser = Omit<User, "passwordHash">;
 
-export type PublicWorkspaceUser = WorkspaceUser & {
+export type PublicWorkspaceMember = WorkspaceMember & {
   user: PublicUser;
 };
 

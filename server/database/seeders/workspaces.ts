@@ -1,6 +1,6 @@
 import { seed } from "drizzle-seed";
 import type { DB } from "..";
-import { type NewWorkspaceUser, workspaces, workspaceUsers } from "../schema";
+import { type NewWorkspaceMember, workspaces, workspaceMembers } from "../schema";
 
 export default async function execute(db: DB) {
   const nWorkspaces: number = 5;
@@ -36,8 +36,8 @@ export default async function execute(db: DB) {
 
   // Assign the owners as admin to the workspaces
   const allWorkspaces = await db.query.workspaces.findMany();
-  await db.insert(workspaceUsers).values(
-    allWorkspaces.map<NewWorkspaceUser>(workspace => ({
+  await db.insert(workspaceMembers).values(
+    allWorkspaces.map<NewWorkspaceMember>(workspace => ({
       userId: allUsers.find(user => user.id == workspace.ownerId)!.id!,
       workspaceId: workspace.id,
       role: "admin",

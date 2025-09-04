@@ -65,7 +65,7 @@
             <UIcon name="i-heroicons-lock-closed" class="w-6 h-6 text-primary" />
             <span>Create account</span>
           </h1>
-          <p class="text-sm text-gray-500 dark:text-gray-400">Join us by creating your account</p>
+          <p class="text-sm text-gray-400">Join us by creating your account</p>
         </div>
       </template>
 
@@ -113,7 +113,7 @@
       </UForm>
 
       <template #footer>
-        <p class="text-center text-sm text-gray-500 dark:text-gray-400">
+        <p class="text-center text-sm text-gray-400">
           Already have an account?
           <NuxtLink to="/auth/login" class="text-primary hover:underline">Sign in</NuxtLink>
         </p>

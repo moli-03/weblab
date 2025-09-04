@@ -55,7 +55,7 @@
             <UIcon name="i-heroicons-lock-closed" class="w-6 h-6 text-primary" />
             <span>Sign in</span>
           </h1>
-          <p class="text-sm text-gray-500 dark:text-gray-400">Enter your credentials to continue</p>
+          <p class="text-sm text-gray-400">Enter your credentials to continue</p>
         </div>
       </template>
 
@@ -95,7 +95,7 @@
       </UForm>
 
       <template #footer>
-        <p class="text-center text-sm text-gray-500 dark:text-gray-400">
+        <p class="text-center text-sm text-gray-400">
           Need an account?
           <NuxtLink to="/auth/register" class="text-primary hover:underline">Sign up</NuxtLink>
         </p>

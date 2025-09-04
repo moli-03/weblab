@@ -93,7 +93,7 @@
             </UBadge>
           </div>
           <p class="text-xs text-muted truncate">Owned by {{ workspace.owner.name }}</p>
-          <p class="text-sm text-gray-600 dark:text-gray-300 mt-2 line-clamp-2">
+          <p class="text-sm text-gray-300 mt-2 line-clamp-2">
             {{ workspace.description }}
           </p>
         </div>

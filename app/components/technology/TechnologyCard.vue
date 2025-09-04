@@ -40,7 +40,7 @@
       <div
         :class="[
           'w-12 h-12 rounded-lg flex items-center justify-center overflow-hidden shrink-0',
-          showLogo ? 'bg-transparent' : 'bg-zinc-100 dark:bg-zinc-800',
+          showLogo ? 'bg-transparent' : 'bg-zinc-800',
         ]"
       >
         <img
@@ -49,7 +49,7 @@
           :alt="technology.name"
           class="w-full h-full object-cover"
           @error="logoError = true"
-        >
+        />
         <span v-else class="text-sm font-semibold uppercase tracking-wide">{{ initials(technology.name) }}</span>
       </div>
       <div class="min-w-0 flex-1">
@@ -70,7 +70,7 @@
         </p>
       </div>
     </div>
-  <p class="text-sm text-muted mt-3 line-clamp-4 leading-relaxed">{{ technology.description }}</p>
+    <p class="text-sm text-muted mt-3 line-clamp-4 leading-relaxed">{{ technology.description }}</p>
     <div class="mt-auto pt-3">
       <div class="flex items-center justify-between text-[11px] text-muted tracking-wide">
         <UBadge
