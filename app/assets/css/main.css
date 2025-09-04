@@ -2,19 +2,6 @@
 @import "@nuxt/ui";
 
 .dark {
-  --ui-primary: var(--color-sky-500);
-  --ui-primary-50: var(--color-sky-50);
-  --ui-primary-100: var(--color-sky-100);
-  --ui-primary-200: var(--color-sky-200);
-  --ui-primary-300: var(--color-sky-300);
-  --ui-primary-400: var(--color-sky-400);
-  --ui-primary-500: var(--color-sky-500);
-  --ui-primary-600: var(--color-sky-600);
-  --ui-primary-700: var(--color-sky-700);
-  --ui-primary-800: var(--color-sky-800);
-  --ui-primary-900: var(--color-sky-900);
-  
-
   --ui-bg: var(--color-zinc-900);
   --ui-bg-elevated: var(--color-zinc-800);
 }

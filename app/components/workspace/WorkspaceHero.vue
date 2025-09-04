@@ -70,20 +70,9 @@
 
 <template>
   <div class="flex flex-col sm:flex-row sm:items-start gap-6">
-    <!-- Icon -->
+    <!-- Logo -->
     <div class="shrink-0">
-      <div
-        v-if="!workspace.logoUrl"
-        class="size-20 flex items-center justify-center rounded-xl bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-300 font-semibold text-2xl"
-      >
-        {{ workspace.name.slice(0, 2).toUpperCase() }}
-      </div>
-      <img
-        v-else
-        :src="workspace.logoUrl"
-        :alt="`${workspace.name} logo`"
-        class="size-20 object-contain object-center rounded-xl ring-1 ring-black/10 dark:ring-white/10"
-      />
+      <WorkspaceLogo :name="workspace.name" :logo-url="workspace.logoUrl" size="xl" />
     </div>
 
     <!-- Title / Meta -->
@@ -115,7 +104,7 @@
         label="Leave"
         size="sm"
         variant="ghost"
-        color="neutral"
+        color="primary"
         :loading="leaving"
         @click="leaveWorkspace"
       />

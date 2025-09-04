@@ -76,17 +76,12 @@
     <div class="flex flex-col gap-3 sm:flex-row sm:items-start">
       <div class="flex items-center gap-3 flex-1 min-w-0">
         <!-- Logo -->
-        <div
-          v-if="!workspace.logoUrl"
-          class="size-12 flex items-center justify-center rounded-md bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-300 font-semibold text-sm"
-        >
-          {{ workspace.name.slice(0, 2).toUpperCase() }}
-        </div>
-        <img
-          v-else
-          :src="workspace.logoUrl"
-          alt="Workspace Logo"
-          class="rounded-lg size-14 object-contain object-center"
+        <WorkspaceLogo
+          :name="workspace.name"
+          :logo-url="workspace.logoUrl"
+          size="md"
+          image-size-class="size-14"
+          rounded="rounded-lg"
         />
 
         <!-- Title and stuff -->
