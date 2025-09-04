@@ -9,6 +9,7 @@ const queryParamsSchema = z.object({
     .string()
     .optional()
     .transform(val => (val === "true" ? true : val === "false" ? false : undefined)),
+  slug: z.string().optional(),
   limit: z.coerce.number().int().positive().max(100).optional().default(50),
   offset: z.coerce.number().int().min(0).optional().default(0),
   search: z.string().optional(),
@@ -50,6 +51,10 @@ export default defineEventHandler(async event => {
           }
         }
 
+        if (parsedQuery.slug) {
+          conditions.push(eq(ws.slug, parsedQuery.slug));
+        }
+
         if (parsedQuery.search) {
           conditions.push(ilike(ws.name, `%${parsedQuery.search}%`));
         }
@@ -69,6 +74,7 @@ export default defineEventHandler(async event => {
     const workspacesWithOwner: WorkspaceWithOwner[] = workspaces.map(ws => ({
       ...ws,
       owner: toPublicUser(ws.owner),
+      isJoined: joinedWorkspaceIds.includes(ws.id),
     }));
 
     return {

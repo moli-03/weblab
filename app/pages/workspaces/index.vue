@@ -33,7 +33,13 @@
       <WorkspaceCreateModal @created="refresh()" />
     </AppEmptyState>
     <div v-else class="space-y-3">
-      <WorkspaceCard v-for="workspace in workspaces" :key="workspace.id" :workspace="workspace" />
+      <WorkspaceCard
+        v-for="workspace in workspaces"
+        :key="workspace.id"
+        :workspace="workspace"
+        @workspace-joined="refresh()"
+        @workspace-left="refresh()"
+      />
 
       <WorkspaceCreateModal @created="refresh()" />
     </div>

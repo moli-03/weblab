@@ -50,7 +50,7 @@ const main = async () => {
               undefined,
             ],
           }),
-          description: f.loremIpsum(),
+          description: f.loremIpsum({ sentencesCount: 2 }),
           isPublic: f.weightedRandom([
             { weight: 0.7, value: f.default({ defaultValue: true }) },
             { weight: 0.3, value: f.default({ defaultValue: false }) },

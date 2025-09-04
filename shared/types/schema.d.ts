@@ -5,6 +5,7 @@ export type User = PublicUser;
 
 export type WorkspaceWithOwner = Workspace & {
   owner: PublicUser;
+  isJoined?: boolean;
 };
 
 export type { Workspace };
