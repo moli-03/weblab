@@ -9,6 +9,6 @@ export default defineNuxtConfig({
       pathPrefix: false,
     },
   ],
-  modules: ["@nuxt/eslint", "@nuxt/test-utils", "@nuxt/ui", "@vueuse/nuxt"],
+  modules: ["@nuxt/eslint", "@nuxt/test-utils", "@nuxt/ui", "@vueuse/nuxt", "@pinia/nuxt"],
   css: ["~/assets/css/main.css"],
 });
