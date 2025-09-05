@@ -69,7 +69,7 @@
           :alt="technology.name"
           class="w-full h-full object-cover"
           @error="logoError = true"
-        >
+        />
         <span v-else class="text-sm font-semibold uppercase tracking-wide">{{ initials(technology.name) }}</span>
       </div>
       <div class="min-w-0 flex-1">
@@ -134,25 +134,17 @@
   <!-- Delete confirmation modal -->
   <UModal :open="confirmDeleteOpen" :ui="{ footer: 'justify-end' }">
     <template #header>
-      <ModalHeader
-        title="Delete technology"
-        icon="material-symbols:delete"
-      />
+      <ModalHeader title="Delete technology" icon="material-symbols:delete" />
     </template>
     <template #body>
       <p class="text-sm text-muted leading-relaxed">
-        Are you sure you want to delete <span class="font-bold">{{ technology.name }}</span>? This action cannot be undone.
+        Are you sure you want to delete <span class="font-bold">{{ technology.name }}</span
+        >? This action cannot be undone.
       </p>
     </template>
     <template #footer>
       <UButton variant="ghost" label="Cancel" icon="material-symbols:close" @click="cancelDelete" />
-      <UButton
-        variant="solid"
-        color="error"
-        label="Delete"
-        icon="material-symbols:delete"
-        @click="confirmDelete"
-      />
+      <UButton variant="solid" color="error" label="Delete" icon="material-symbols:delete" @click="confirmDelete" />
     </template>
   </UModal>
 </template>

@@ -111,6 +111,12 @@
     { label: "Workspaces", to: "/workspaces" },
     { label: workspace.value ? workspace.value.name : "Loading" },
   ]);
+
+  function onTechnologyDeleted(id: string) {
+    if (technologies.value && Array.isArray(technologies.value)) {
+      technologies.value = technologies.value.filter(t => t.id !== id);
+    }
+  }
 </script>
 
 <template>
@@ -211,7 +217,7 @@
                 </div>
                 <!-- Content -->
                 <div v-else-if="!!technologies">
-                  <TechnologyGroups :technologies="technologies" :editable="isAdmin" />
+                  <TechnologyGroups :technologies="technologies" :editable="isAdmin" @deleted="onTechnologyDeleted" />
                 </div>
               </div>
             </section>

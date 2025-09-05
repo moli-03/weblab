@@ -376,6 +376,15 @@
     }
   });
 
+  watch(
+    () => props.technologies,
+    () => {
+      drawRadar();
+    },
+  );
+
+  window.addEventListener("resize", useDebounceFn(drawRadar, 200));
+
   // Computed positioning for tooltip
   const tooltipPosition = computed(() => {
     if (!hoveredPoint.value) return { left: "1rem", top: "1rem" };
@@ -386,8 +395,6 @@
       top: `${hoveredPoint.value.y - 40}px`,
     };
   });
-
-  window.addEventListener("resize", useDebounceFn(drawRadar, 200));
 </script>
 
 <template>
