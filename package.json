@@ -24,6 +24,7 @@
     "@nuxt/ui": "^3.3.2",
     "@vueuse/nuxt": "^13.9.0",
     "bcrypt": "^6.0.0",
+    "d3": "^7.9.0",
     "drizzle-orm": "^0.44.5",
     "drizzle-seed": "^0.3.1",
     "eslint": "^9.34.0",
@@ -40,6 +41,7 @@
   "devDependencies": {
     "@nuxt/test-utils": "^3.19.2",
     "@types/bcrypt": "^6.0.0",
+    "@types/d3": "^7.4.3",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/pg": "^8.15.5",
     "@vue/test-utils": "^2.4.6",

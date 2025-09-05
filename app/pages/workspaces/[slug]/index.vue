@@ -166,16 +166,13 @@
                   </template>
                 </UPopover>
               </div>
-              <div
-                class="relative rounded-xl border border-gray-800 p-4 bg-gradient-to-b from-gray-900 to-gray-950 min-h-64 flex items-center justify-center"
-              >
-                <div class="text-center space-y-2">
-                  <p class="text-sm font-medium">Radar visualization coming soon</p>
-                  <p class="text-xs text-muted max-w-[14rem] mx-auto">
-                    Will display ring/category distribution of published technologies.
-                  </p>
-                </div>
-              </div>
+              <TechnologyRadar v-if="technologies" :technologies="technologies" />
+              <AppEmptyState
+                v-else
+                icon="material-symbols:hub"
+                title="No technologies yet"
+                description="Add technologies to see the radar visualization."
+              />
             </section>
 
             <!-- Technologies Section -->
