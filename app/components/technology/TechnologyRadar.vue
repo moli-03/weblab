@@ -6,210 +6,221 @@
     technologies: Technology[];
   }
 
-  interface RadarPoint {
-    id: string;
+  interface RadarRing {
     name: string;
-    ring: string;
-    sector: string;
+    color: string;
+    label: string;
+  }
+
+  interface RadarSector {
+    name: string;
+    label: string;
+  }
+
+  interface Config {
+    margin: number;
+    minSize: number;
+    ringWidth: number;
+    ringOpacity: number;
+    pointSize: number;
+    rings: RadarRing[];
+    sectors: RadarSector[];
+  }
+
+  interface Point {
     x: number;
     y: number;
+  }
+
+  interface TechnologyPoint extends Point {
     technology: Technology;
   }
+
 </script>
 
 <script lang="ts" setup>
   const props = defineProps<Props>();
 
-  const radarContainer = ref<HTMLDivElement>();
+  const radarContainer = useTemplateRef("radarContainer");
   const hoveredTechnology = ref<Technology | null>(null);
   const hoveredPoint = ref<{ x: number; y: number } | null>(null);
 
   // Configuration - responsive sizing
-  const config = {
+  const config: Config = {
     margin: 20,
+    minSize: 200,
+    ringWidth: 3,
+    ringOpacity: 0.3,
+    pointSize: 14,
     rings: [
-      { name: "adopt", radius: 0.25, color: "var(--ui-success)", label: "ADOPT" },
-      { name: "trial", radius: 0.5, color: "var(--ui-info)", label: "TRIAL" },
-      { name: "assess", radius: 0.75, color: "var(--ui-warning)", label: "ASSESS" },
-      { name: "hold", radius: 1.0, color: "var(--ui-error)", label: "HOLD" },
+      { name: "adopt", color: "var(--ui-success)", label: "ADOPT" },
+      { name: "trial", color: "var(--ui-info)", label: "TRIAL" },
+      { name: "assess", color: "var(--ui-warning)", label: "ASSESS" },
+      { name: "hold", color: "var(--ui-error)", label: "HOLD" },
     ],
     sectors: [
-      { name: "technique", angle: 0, label: "Techniques" },
-      { name: "tool", angle: 90, label: "Tools" },
-      { name: "platform", angle: 180, label: "Platforms" },
-      { name: "framework", angle: 270, label: "Frameworks" },
+      { name: "technique", label: "Techniques" },
+      { name: "tool", label: "Tools" },
+      { name: "platform", label: "Platforms" },
+      { name: "framework", label: "Frameworks" },
     ],
   };
 
   const drawRadar = () => {
-    if (!radarContainer.value) return;
+    if (!radarContainer.value) {
+      console.error("Radar container not found");
+      return;
+    };
 
     // Clear previous content
     d3.select(radarContainer.value).selectAll("*").remove();
 
     // Calculate responsive dimensions based on parent container
     const parentElement = radarContainer.value.parentElement;
-    if (!parentElement) return;
+    if (!parentElement) {
+      console.error("Radar container has no parent element");
+      return;
+    }
     
     const parentRect = parentElement.getBoundingClientRect();
     const availableWidth = parentRect.width;
     
     // Use the width to calculate radar size, with some padding
     // Ensure minimum size to prevent negative radius
-    const minSize = 100; // Minimum radar size
-    const calculatedSize = availableWidth - config.margin * 2;
-    const size = Math.max(calculatedSize, minSize);
-    const radius = (size - 2 * config.margin) / 2;
-    
-    // Ensure radius is positive
-    if (radius <= 0) return;
-    
-    const center = { x: size / 2, y: size / 2 };
+    const outerSize = Math.max(availableWidth, config.minSize);
+    const innerSize = outerSize - config.margin * 2;
+    const radius = innerSize / 2;
 
-    // Create SVG
-    const svg = d3
+    const getRingRadius = (index: number) => {
+      return radius * (1 / config.rings.length) * (index + 1);
+    };
+
+    // Ensure radius is positive
+    if (radius <= 0) {
+      console.error("Calculated radius is non-positive:", radius);
+      return;
+    }
+    
+    const center: Point = {
+      x: outerSize / 2,
+      y: outerSize / 2
+    };
+
+    // Create the background
+    const backgroundSvg = d3
       .select(radarContainer.value)
       .append("svg")
-      .attr("width", size)
-      .attr("height", size)
-      .style("background", "var(--color-zinc-800)") // zinc-800 using Tailwind CSS variable
+      .attr("width", outerSize)
+      .attr("height", outerSize)
+      .style("background", "var(--color-zinc-800)")
       .style("border-radius", "12px")
       .style("border", "1px solid rgb(55 65 81)");
 
-    // Create defs for gradients and patterns
-    const defs = svg.append("defs");
-
-    // Add radial gradient for rings (dark mode)
-    const gradient = defs
-      .append("radialGradient")
-      .attr("id", "ringGradient")
-      .attr("cx", "50%")
-      .attr("cy", "50%")
-      .attr("r", "50%");
-
-    gradient.append("stop").attr("offset", "0%").attr("stop-color", "rgba(31, 41, 55, 0.9)");
-
-    gradient.append("stop").attr("offset", "100%").attr("stop-color", "rgba(31, 41, 55, 0.1)");
-
-    // Add clipPath for rounded images
-    defs.append("clipPath")
-      .attr("id", "rounded-image")
-      .append("rect")
-      .attr("x", -9)
-      .attr("y", -9)
-      .attr("width", 18)
-      .attr("height", 18)
-      .attr("rx", 3)
-      .attr("ry", 3);
-
-    const g = svg.append("g").attr("transform", `translate(${center.x}, ${center.y})`);
+    // Main group at the center
+    const group = backgroundSvg.append("g").attr("transform", `translate(${center.x}, ${center.y})`);
 
     // Draw rings
-    config.rings.forEach((ring, i) => {
-      const ringRadius = radius * ring.radius;
+    for (let i = 0; i < config.rings.length; i++) {
+      const ring = config.rings[i]!;
+      const ringRadius = getRingRadius(i);
 
-      g.append("circle")
+      // The circle
+      group.append("circle")
         .attr("r", ringRadius)
         .attr("fill", "none")
         .attr("stroke", ring.color)
-        .attr("stroke-width", 2)
-        .attr("stroke-opacity", 0.3);
+        .attr("stroke-width", config.ringWidth)
+        .attr("stroke-opacity", config.ringOpacity);
 
-      // Ring labels
-      g.append("text")
-        .attr("x", 0)
-        .attr("y", -ringRadius + 15)
+      // Ring label
+      group.append("text")
+        .attr("x", 0) // Centered
+        .attr("y", -ringRadius + 15) // Slightly inside the ring
         .attr("text-anchor", "middle")
-        .attr("font-family", "Inter, system-ui, sans-serif")
-        .attr("font-size", "10px")
+        .attr("font-size", "11px")
         .attr("font-weight", "600")
         .attr("fill", ring.color)
         .style("letter-spacing", "1px")
         .text(ring.label);
-    });
+    }
 
     // Draw sector lines
-    config.sectors.forEach(sector => {
-      const angle = ((sector.angle - 90) * Math.PI) / 180; // Adjust for top start
-      const x1 = Math.cos(angle) * radius * 0.15;
-      const y1 = Math.sin(angle) * radius * 0.15;
+    const sectorAngle = 2 * Math.PI / config.sectors.length;
+    for (let i = 0; i < config.sectors.length; i++) {
+      const sector = config.sectors[i]!;
+      const angle = sectorAngle * i; 
+
+      const x1 = 0;
+      const y1 = 0;
+
       const x2 = Math.cos(angle) * radius;
       const y2 = Math.sin(angle) * radius;
 
-      g.append("line")
+      // Separator line
+      group.append("line")
         .attr("x1", x1)
         .attr("y1", y1)
         .attr("x2", x2)
         .attr("y2", y2)
-        .attr("stroke", "#4b5563")
-        .attr("stroke-width", 1)
-        .attr("stroke-opacity", 0.3);
-    });
+        .attr("stroke", "var(--color-zinc-500)")
+        .attr("stroke-width", 2)
+        .attr("stroke-opacity", 0.4);
 
-    // Add sector labels in actual corners of the diagram
-    const cornerLabels = [
-      { label: "TECHNIQUES", x: radius * 0.75, y: -radius * 0.75 }, // top-right
-      { label: "TOOLS", x: radius * 0.75, y: radius * 0.75 }, // bottom-right
-      { label: "PLATFORMS", x: -radius * 0.75, y: radius * 0.75 }, // bottom-left
-      { label: "FRAMEWORKS", x: -radius * 0.75, y: -radius * 0.75 }, // top-left
-    ];
+      // Sector label at the edge
+      const multiplier = 1.07;
+      const labelX = Math.cos(angle + sectorAngle / 2) * radius * multiplier;
+      const labelY = Math.sin(angle + sectorAngle / 2) * radius * multiplier;
 
-    cornerLabels.forEach(corner => {
-      g.append("text")
-        .attr("x", corner.x)
-        .attr("y", corner.y)
+      group.append("text")
+        .attr("x", labelX)
+        .attr("y", labelY)
         .attr("text-anchor", "middle")
-        .attr("dominant-baseline", "middle")
-        .attr("font-family", "Inter, system-ui, sans-serif")
-        .attr("font-size", "11px")
-        .attr("font-weight", "700")
-        .attr("fill", "#d1d5db")
-        .style("text-transform", "uppercase")
+        .attr("font-size", "14px")
+        .attr("font-weight", "500")
+        .attr("fill", "var(--color-zinc-300)")
         .style("letter-spacing", "1px")
-        .text(corner.label);
-    });
+        .text(sector.label);
+    }
 
-    // Prepare technology points
-    const publishedTechnologies = props.technologies.filter(tech => tech.status === "published" && tech.ring);
+    // Add the technologies
+    const technologyPoints: TechnologyPoint[] = [];
+    for (const technology of props.technologies) {
 
-    const radarPoints: RadarPoint[] = publishedTechnologies
-      .map(tech => {
-        const ring = config.rings.find(r => r.name === tech.ring);
-        const sector = config.sectors.find(s => s.name === tech.category);
+      if (technology.status !== "published") {
+        continue;
+      }
 
-        if (!ring || !sector) return null;
+      const ringIndex = config.rings.findIndex(r => r.name === technology.ring);
+      const sectorIndex = config.sectors.findIndex(s => s.name === technology.category);
 
-        // Calculate position with some randomness within the ring/sector
-        const ringIndex = config.rings.findIndex(r => r.name === tech.ring);
-        const minRadius = ringIndex === 0 ? radius * 0.2 : radius * (config.rings[ringIndex - 1]?.radius || 0) + 15;
-        const maxRadius = radius * ring.radius - 20;
-        const techRadius = minRadius + Math.random() * (maxRadius - minRadius);
+      if (ringIndex == -1 || sectorIndex == -1) {
+        console.warn(`Technology ${technology.name} has invalid ring or category`, technology);
+        continue;
+      }
 
-        // Ensure technologies stay within their sector boundaries
-        // Each sector is a full 90-degree quadrant: 0-90, 90-180, 180-270, 270-360
-        const sectorStartAngle = (sector.angle * Math.PI) / 180;
-        const sectorEndAngle = ((sector.angle + 90) * Math.PI) / 180;
-        const techAngle = sectorStartAngle + Math.random() * (sectorEndAngle - sectorStartAngle);
+      const minRadius = ringIndex === 0 ? 0 : getRingRadius(ringIndex - 1) + 15;
+      const maxRadius = getRingRadius(ringIndex) - 15;
 
-        const x = Math.cos(techAngle) * techRadius;
-        const y = Math.sin(techAngle) * techRadius;
+      const sectorStartAngle = sectorAngle * sectorIndex;
+      const sectorEndAngle = sectorStartAngle + sectorAngle;
 
-        return {
-          id: tech.id,
-          name: tech.name,
-          ring: tech.ring,
-          sector: tech.category,
-          x,
-          y,
-          technology: tech,
-        };
-      })
-      .filter(Boolean) as RadarPoint[];
+      const techRadius = minRadius + Math.random() * (maxRadius - minRadius);
+      const techAngle = sectorStartAngle + Math.random() * (sectorEndAngle - sectorStartAngle);
+
+      const x = Math.cos(techAngle) * techRadius;
+      const y = Math.sin(techAngle) * techRadius;
+
+      technologyPoints.push({
+        x,
+        y,
+        technology,
+      });
+    }
 
     // Draw technology points
-    const points = g
+    const points = group
       .selectAll(".tech-point")
-      .data(radarPoints)
+      .data(technologyPoints)
       .enter()
       .append("g")
       .attr("class", "tech-point")
@@ -243,28 +254,29 @@
     // Technology circles
     points
       .append("circle")
-      .attr("r", 14)
+      .attr("r", config.pointSize)
       .attr("fill", d => {
-        const ring = config.rings.find(r => r.name === d.ring);
-        return ring?.color || "#6b7280";
+        const ring = config.rings.find(r => r.name === d.technology.ring)!;
+        return ring.color;
       })
-      .attr("stroke", "var(--color-zinc-800)")
-      .attr("stroke-width", 2)
+      .attr("stroke", "var(--color-zinc-900)")
+      .attr("stroke-width", 1)
       .style("filter", "drop-shadow(0 2px 4px rgba(0,0,0,0.3))");
 
     // Technology logos (if available)
     points.each(function (d) {
-      if (d.technology.logoUrl) {
-        d3.select(this)
-          .append("image")
-          .attr("href", d.technology.logoUrl)
-          .attr("x", -9)
-          .attr("y", -9)
-          .attr("width", 18)
-          .attr("height", 18)
-          .attr("clip-path", "url(#rounded-image)")
-          .style("pointer-events", "none");
+      if (!d.technology.logoUrl) {
+        return;
       }
+
+      d3.select(this)
+        .append("image")
+        .attr("href", d.technology.logoUrl)
+        .attr("x", -9)
+        .attr("y", -9)
+        .attr("width", 18)
+        .attr("height", 18)
+        .style("pointer-events", "none");
     });
   };
 
@@ -284,14 +296,6 @@
     }
   });
 
-  watch(
-    () => props.technologies,
-    () => {
-      drawRadar();
-    },
-    { deep: true },
-  );
-
   // Computed positioning for tooltip
   const tooltipPosition = computed(() => {
     if (!hoveredPoint.value) return { left: "1rem", top: "1rem" };
@@ -302,6 +306,10 @@
       top: `${hoveredPoint.value.y - 40}px`,
     };
   });
+
+
+  window.addEventListener("resize", useDebounceFn(drawRadar, 200));
+  
 </script>
 
 <template>
@@ -309,7 +317,7 @@
     <div ref="radarContainer" />
 
     <!-- Technology details tooltip -->
-    <div v-if="hoveredTechnology" class="absolute z-50 bg-zinc-800 rounded-lg shadow-xl w-80" :style="tooltipPosition">
+    <div v-if="hoveredTechnology" class="absolute z-50 border border-primary bg-zinc-800 rounded-lg shadow-xl w-80" :style="tooltipPosition">
       <TechnologyCard :technology="hoveredTechnology" />
     </div>
   </div>
