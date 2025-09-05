@@ -51,7 +51,7 @@
 
   type Schema = z.infer<typeof schema>;
 
-  const state = ref<Schema>({
+  const defaultState: Schema = {
     name: "",
     description: "",
     category: "framework",
@@ -59,7 +59,12 @@
     logoUrl: "",
     ringDescription: "",
     publish: false,
-  });
+  };
+  const state = ref<Schema>({ ...defaultState });
+
+  const reset = () => {
+    state.value = { ...defaultState };
+  };
 
   const categoryOptions: CategoryItem[] = [
     {
@@ -101,8 +106,8 @@
       const technology = await $authFetch<Technology>(`/api/workspaces/${props.workspaceId}/technologies`, {
         method: "POST",
         body: {
-          ...event.data
-        }
+          ...event.data,
+        },
       });
 
       toast.add({
@@ -110,6 +115,7 @@
         icon: "material-symbols:check-circle",
         color: "success",
       });
+      reset();
       emit("created", technology);
       isOpen.value = false;
     } catch (error) {
@@ -122,6 +128,11 @@
     } finally {
       isSubmitting.value = false;
     }
+  }
+
+  function close() {
+    isOpen.value = false;
+    reset();
   }
 </script>
 
@@ -190,13 +201,7 @@
     </template>
 
     <template #footer>
-      <UButton
-        variant="ghost"
-        label="Cancel"
-        icon="material-symbols:close"
-        :disabled="isSubmitting"
-        @click="isOpen = false"
-      />
+      <UButton variant="ghost" label="Cancel" icon="material-symbols:close" :disabled="isSubmitting" @click="close" />
       <UButton
         variant="solid"
         color="primary"

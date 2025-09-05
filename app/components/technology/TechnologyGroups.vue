@@ -56,7 +56,10 @@
     }"
   >
     <template #trailing="{ open, item }">
-      <div class="flex justify-between w-full">
+      <div
+        class="flex w-full"
+        :class="{ 'justify-between': item.techniques.length > 0, 'justify-end': item.techniques.length === 0 }"
+      >
         <UBadge
           v-if="item.techniques.length > 0"
           :label="item.techniques.length"
@@ -71,7 +74,14 @@
       </div>
     </template>
     <template v-for="item in accordionItems" :key="item.slot" #[item.slot]>
-      <div class="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 py-2">
+      <div v-if="item.techniques.length === 0" class="py-3">
+        <AppEmptyState
+          icon="material-symbols:folder-open"
+          title="Nothing here yet"
+          :description="`No ${(item.label || 'items').toString().toLowerCase()} added yet.`"
+        />
+      </div>
+      <div v-else class="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 py-2">
         <TechnologyCard v-for="tech in item.techniques" :key="tech.id" :technology="tech" class="h-fit" />
       </div>
     </template>

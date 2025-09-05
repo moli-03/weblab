@@ -7,23 +7,28 @@ const paramsSchema = z.object({
   id: z.uuid(),
 });
 
-const bodySchema = z.object({
-  name: z.string().nonempty().max(255),
-  description: z.string().nonempty(),
-  category: z.enum(["framework", "tool", "technique", "platform"]),
-  ring: z.enum(["adopt", "trial", "assess", "hold"]).optional(),
-  ringDescription: z.string().optional(),
-  logoUrl: z.httpUrl().optional().or(z.literal("")),
-  publish: z.boolean(),
-}).refine(data => {
-  if (data.publish) {
-    return data.ring !== undefined;
-  }
-  return true;
-}, {
-  message: "Ring is required when publishing",
-  path: ["ring"],
-});
+const bodySchema = z
+  .object({
+    name: z.string().nonempty().max(255),
+    description: z.string().nonempty(),
+    category: z.enum(["framework", "tool", "technique", "platform"]),
+    ring: z.enum(["adopt", "trial", "assess", "hold"]).optional(),
+    ringDescription: z.string().optional(),
+    logoUrl: z.httpUrl().optional().or(z.literal("")),
+    publish: z.boolean(),
+  })
+  .refine(
+    data => {
+      if (data.publish) {
+        return data.ring !== undefined;
+      }
+      return true;
+    },
+    {
+      message: "Ring is required when publishing",
+      path: ["ring"],
+    },
+  );
 
 export default defineEventHandler(async event => {
   try {
@@ -47,17 +52,20 @@ export default defineEventHandler(async event => {
     const body = await readBody(event);
     const parsedBody = bodySchema.parse(body);
 
-    const newTechnology = await db.insert(technologies).values({
-      workspaceId: workspace.id,
-      name: parsedBody.name,
-      category: parsedBody.category,
-      description: parsedBody.description,
-      ring: parsedBody.ring,
-      ringDescription: parsedBody.ringDescription,
-      logoUrl: parsedBody.logoUrl,
-      status: parsedBody.publish ? "published" : "draft",
-      publishedAt: parsedBody.publish ? new Date().toISOString() : null
-    }).returning();
+    const newTechnology = await db
+      .insert(technologies)
+      .values({
+        workspaceId: workspace.id,
+        name: parsedBody.name,
+        category: parsedBody.category,
+        description: parsedBody.description,
+        ring: parsedBody.ring,
+        ringDescription: parsedBody.ringDescription,
+        logoUrl: parsedBody.logoUrl,
+        status: parsedBody.publish ? "published" : "draft",
+        publishedAt: parsedBody.publish ? new Date().toISOString() : null,
+      })
+      .returning();
 
     return newTechnology;
   } catch (error: unknown) {

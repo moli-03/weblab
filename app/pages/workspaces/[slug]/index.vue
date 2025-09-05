@@ -70,7 +70,11 @@
     }
   });
 
-  const { data: technologies, status: techStatus } = useAsyncData(
+  const {
+    data: technologies,
+    status: techStatus,
+    refresh: refreshTechnologies,
+  } = useAsyncData(
     async () => {
       if (workspace.value) {
         return await $authFetch(`/api/workspaces/${workspace.value.id}/technologies`);
@@ -180,10 +184,7 @@
                 <h2 class="text-lg font-semibold tracking-tight flex items-center gap-2">
                   <UIcon name="material-symbols:hub" class="text-xl text-primary" /> Technologies
                 </h2>
-                <TechnologyCreateModal
-                  v-if="isAdmin"
-                  :workspace-id="workspace.id"
-                >
+                <TechnologyCreateModal v-if="isAdmin" :workspace-id="workspace.id" @created="refreshTechnologies()">
                   <template #default="{ open }">
                     <UButton icon="material-symbols:add" label="Add" size="sm" variant="subtle" @click="open()" />
                   </template>
@@ -207,6 +208,7 @@
                     <TechnologyCreateModal
                       v-if="isAdmin"
                       :workspace-id="workspace.id"
+                      @created="refreshTechnologies()"
                     />
                   </AppEmptyState>
                 </div>

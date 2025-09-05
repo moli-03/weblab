@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-  import type { BadgeProps } from '@nuxt/ui';
-  import z from 'zod';
+  import type { BadgeProps } from "@nuxt/ui";
+  import z from "zod";
 
   interface Props {
-    modelValue: string|null|undefined;
+    modelValue: string | null | undefined;
     name?: string;
     label?: string;
     disabled?: boolean;
@@ -18,7 +18,7 @@
   });
 
   const emit = defineEmits<{
-    (e: "update:modelValue", value: string|null|undefined): void;
+    (e: "update:modelValue", value: string | null | undefined): void;
   }>();
 
   // Status handling
@@ -38,16 +38,16 @@
       reset();
       return true; // Allow null/empty values
     }
-    
+
     if (!urlSchema.safeParse(url).success) {
-      status.value = "error"
+      status.value = "error";
       message.value = "Invalid URL format";
       return false;
     }
-    
+
     status.value = "loading";
     message.value = "Checking image...";
-    
+
     try {
       const response = await fetch(url, { method: "HEAD" });
       const contentType = response.headers.get("content-type");
@@ -69,7 +69,7 @@
     }
   }
 
-  async function update(v: string|null) {
+  async function update(v: string | null) {
     const isValid = await isImage(v);
     if (isValid) {
       emit("update:modelValue", v);
@@ -78,7 +78,7 @@
 
   const debouncedUpdate = useDebounceFn(update, 800);
 
-  const badgeProps = computed<BadgeProps|null>(() => {
+  const badgeProps = computed<BadgeProps | null>(() => {
     if (status.value === "ok") {
       return { color: "success", label: "Valid" };
     }
@@ -98,13 +98,7 @@
       <template #label>
         <div class="flex items-center gap-2">
           <span>{{ props.label }}</span>
-          <UBadge
-            v-if="badgeProps"
-            :color="badgeProps.color"
-            size="xs"
-            variant="soft"
-            :label="badgeProps.label"
-          />
+          <UBadge v-if="badgeProps" :color="badgeProps.color" size="xs" variant="soft" :label="badgeProps.label" />
         </div>
       </template>
       <div class="flex gap-2">
@@ -134,15 +128,13 @@
         </p>
       </template>
     </UFormField>
-    <div
-      class="rounded-lg size-14 border border-zinc-700 flex items-center justify-center"
-    >
+    <div class="rounded-lg size-14 border border-zinc-700 flex items-center justify-center">
       <img
         v-if="props.modelValue && status === 'ok'"
         :src="props.modelValue"
         alt="Logo preview"
         class="object-contain w-full h-full rounded-lg"
-      >
+      />
       <UIcon v-else name="material-symbols:image" class="text-xl text-zinc-600" />
     </div>
   </div>
