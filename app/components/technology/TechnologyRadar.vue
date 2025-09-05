@@ -23,6 +23,8 @@
     ringWidth: number;
     ringOpacity: number;
     pointSize: number;
+    imageSize: number;
+    hoverScaleMultiplier: number;
     rings: RadarRing[];
     sectors: RadarSector[];
   }
@@ -52,6 +54,8 @@
     ringWidth: 3,
     ringOpacity: 0.3,
     pointSize: 14,
+    imageSize: 18,
+    hoverScaleMultiplier: 1.3,
     rings: [
       { name: "adopt", color: "var(--ui-success)", label: "ADOPT" },
       { name: "trial", color: "var(--ui-info)", label: "TRIAL" },
@@ -233,22 +237,50 @@
           x: center.x + d.x,
           y: center.y + d.y,
         };
-        d3.select(this)
+        const selection = d3.select(this);
+        const scaledPointSize = config.pointSize * config.hoverScaleMultiplier;
+        const scaledImageSize = config.imageSize * config.hoverScaleMultiplier;
+        
+        // Scale the circle
+        selection
           .select("circle")
           .transition()
           .duration(200)
-          .attr("r", 18)
+          .attr("r", scaledPointSize)
           .style("filter", "drop-shadow(0 4px 8px rgba(0,0,0,0.4))");
+        
+        // Scale the image if it exists
+        selection
+          .select("image")
+          .transition()
+          .duration(200)
+          .attr("x", -scaledImageSize / 2)
+          .attr("y", -scaledImageSize / 2)
+          .attr("width", scaledImageSize)
+          .attr("height", scaledImageSize);
       })
       .on("mouseout", function (event, d) {
         hoveredTechnology.value = null;
         hoveredPoint.value = null;
-        d3.select(this)
+        const selection = d3.select(this);
+        
+        // Reset circle scale
+        selection
           .select("circle")
           .transition()
           .duration(200)
-          .attr("r", 14)
+          .attr("r", config.pointSize)
           .style("filter", "drop-shadow(0 2px 4px rgba(0,0,0,0.3))");
+        
+        // Reset image scale
+        selection
+          .select("image")
+          .transition()
+          .duration(200)
+          .attr("x", -config.imageSize / 2)
+          .attr("y", -config.imageSize / 2)
+          .attr("width", config.imageSize)
+          .attr("height", config.imageSize);
       });
 
     // Technology circles
@@ -272,10 +304,10 @@
       d3.select(this)
         .append("image")
         .attr("href", d.technology.logoUrl)
-        .attr("x", -9)
-        .attr("y", -9)
-        .attr("width", 18)
-        .attr("height", 18)
+        .attr("x", -config.imageSize / 2)
+        .attr("y", -config.imageSize / 2)
+        .attr("width", config.imageSize)
+        .attr("height", config.imageSize)
         .style("pointer-events", "none");
     });
   };

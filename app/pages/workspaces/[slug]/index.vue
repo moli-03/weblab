@@ -134,11 +134,13 @@
         <WorkspaceHero :workspace="workspace" :is-owner="isOwner" @joined="refresh" @left="navigateTo('/workspaces')" />
 
         <!-- Main Content Grid -->
-        <div class="mt-2 grid gap-10 border-t border-gray-800 pt-8">
+        <div class="mt-2 grid gap-10 border-t border-zinc-800 pt-8">
+
           <!-- Radar & Technologies Side by Side (stack on small) -->
-          <div class="grid gap-8 lg:grid-cols-3">
+          <div class="grid gap-8 grid-cols-1 md:grid-cols-[35%_1fr]">
+
             <!-- Radar Section -->
-            <section class="lg:col-span-1 flex flex-col gap-4">
+            <section class="space-y-4">
               <div class="flex items-center justify-between">
                 <h2 class="text-lg font-semibold tracking-tight flex items-center gap-2">
                   <UIcon name="material-symbols:radar" class="text-xl text-primary" /> Radar
@@ -166,7 +168,10 @@
                   </template>
                 </UPopover>
               </div>
-              <TechnologyRadar v-if="technologies" :technologies="technologies" />
+              <TechnologyRadar 
+                v-if="!!technologies"
+                :technologies="technologies"
+              />
               <AppEmptyState
                 v-else
                 icon="material-symbols:hub"
@@ -176,7 +181,7 @@
             </section>
 
             <!-- Technologies Section -->
-            <section class="lg:col-span-2 flex flex-col gap-4">
+            <section class="space-y-4">
               <div class="flex items-center justify-between">
                 <h2 class="text-lg font-semibold tracking-tight flex items-center gap-2">
                   <UIcon name="material-symbols:hub" class="text-xl text-primary" /> Technologies
