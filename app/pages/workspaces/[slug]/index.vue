@@ -182,13 +182,7 @@
                 </h2>
                 <TechnologyCreateModal v-if="isAdmin">
                   <template #default="{ open }">
-                    <UButton
-                      icon="material-symbols:add"
-                      label="Add"
-                      size="sm"
-                      variant="subtle"
-                      @click="open()"
-                    />
+                    <UButton icon="material-symbols:add" label="Add" size="sm" variant="subtle" @click="open()" />
                   </template>
                 </TechnologyCreateModal>
               </div>

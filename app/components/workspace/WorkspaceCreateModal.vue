@@ -117,7 +117,7 @@
         title="Create a new workspace"
         subtitle="Set up a workspace to track technologies and decisions"
         icon="i-heroicons-rectangle-stack"
-        />
+      />
     </template>
 
     <template #body>
@@ -176,7 +176,7 @@
             :src="state.logoUrl"
             alt="Logo Preview"
             class="rounded-lg size-14 object-contain object-center"
-          >
+          />
         </div>
 
         <UFormField label="Visibility" name="isPublic">
