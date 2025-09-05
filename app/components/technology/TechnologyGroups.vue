@@ -5,6 +5,7 @@
   interface Props {
     technologies: Technology[];
     multiple?: boolean; // allow multiple accordion sections open
+    editable?: boolean;
   }
 
   interface ExtendedAccordionItem extends AccordionItem {
@@ -13,6 +14,7 @@
 
   const props = withDefaults(defineProps<Props>(), {
     multiple: true,
+    editable: false,
   });
 
   const getTechniquesForCategory = (category: Technology["category"]) => {
@@ -82,7 +84,13 @@
         />
       </div>
       <div v-else class="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 py-2">
-        <TechnologyCard v-for="tech in item.techniques" :key="tech.id" :technology="tech" class="h-fit" />
+        <TechnologyCard
+          v-for="tech in item.techniques"
+          :key="tech.id"
+          :technology="tech"
+          class="h-fit"
+          :editable="editable"
+        />
       </div>
     </template>
   </UAccordion>

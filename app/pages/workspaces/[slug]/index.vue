@@ -104,7 +104,7 @@
 
   // Derived state
   const isOwner = computed(() => (workspace.value && user.value?.id === workspace.value.ownerId) || false);
-  const isAdmin = computed(() => workspace.value && workspace.value.memberRole === "admin");
+  const isAdmin = computed(() => (workspace.value && workspace.value.memberRole === "admin") || false);
 
   // Breadcrumbs for UBreadcrumb (Nuxt UI expects label + optional to)
   const breadcrumbs = computed<BreadcrumbItem[]>(() => [
@@ -211,7 +211,7 @@
                 </div>
                 <!-- Content -->
                 <div v-else-if="!!technologies">
-                  <TechnologyGroups :technologies="technologies" />
+                  <TechnologyGroups :technologies="technologies" :editable="isAdmin" />
                 </div>
               </div>
             </section>

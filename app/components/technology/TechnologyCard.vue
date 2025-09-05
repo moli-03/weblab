@@ -5,9 +5,17 @@
 
   interface Props {
     technology: Technology;
+    editable?: boolean;
   }
 
-  const props = defineProps<Props>();
+  const props = withDefaults(defineProps<Props>(), {
+    editable: false,
+  });
+
+  const emit = defineEmits<{
+    /** Fired when the edit or delete button is clicked */
+    (e: "edit" | "delete", technology: Technology): void;
+  }>();
 
   const ringColor = computed(() => {
     switch (props.technology.ring) {
@@ -32,11 +40,23 @@
   const publishedRelative = computed(() =>
     props.technology.publishedAt ? moment(props.technology.publishedAt).fromNow() : null,
   );
+  // Delete confirmation dialog state
+  const confirmDeleteOpen = ref(false);
+  function requestDelete() {
+    confirmDeleteOpen.value = true;
+  }
+  function cancelDelete() {
+    confirmDeleteOpen.value = false;
+  }
+  function confirmDelete() {
+    emit("delete", props.technology);
+    confirmDeleteOpen.value = false;
+  }
 </script>
 
 <template>
   <UCard variant="soft">
-    <div class="flex items-start gap-3">
+    <div class="flex items-start gap-3 relative">
       <div
         :class="[
           'w-12 h-12 rounded-lg flex items-center justify-center overflow-hidden shrink-0',
@@ -49,7 +69,7 @@
           :alt="technology.name"
           class="w-full h-full object-cover"
           @error="logoError = true"
-        />
+        >
         <span v-else class="text-sm font-semibold uppercase tracking-wide">{{ initials(technology.name) }}</span>
       </div>
       <div class="min-w-0 flex-1">
@@ -64,6 +84,24 @@
               class="capitalize cursor-help"
             />
           </UTooltip>
+          <div v-if="props.editable" class="flex items-center gap-1 ml-auto">
+            <UButton
+              size="xs"
+              variant="ghost"
+              color="primary"
+              icon="material-symbols:edit"
+              aria-label="Edit technology"
+              @click="emit('edit', technology)"
+            />
+            <UButton
+              size="xs"
+              variant="ghost"
+              color="error"
+              icon="material-symbols:delete"
+              aria-label="Delete technology"
+              @click="requestDelete"
+            />
+          </div>
         </div>
         <p class="text-xs text-muted mt-0.5 capitalize flex items-center gap-1">
           {{ technology.category }}
@@ -93,6 +131,30 @@
       </div>
     </div>
   </UCard>
+  <!-- Delete confirmation modal -->
+  <UModal :open="confirmDeleteOpen" :ui="{ footer: 'justify-end' }">
+    <template #header>
+      <ModalHeader
+        title="Delete technology"
+        icon="material-symbols:delete"
+      />
+    </template>
+    <template #body>
+      <p class="text-sm text-muted leading-relaxed">
+        Are you sure you want to delete <span class="font-bold">{{ technology.name }}</span>? This action cannot be undone.
+      </p>
+    </template>
+    <template #footer>
+      <UButton variant="ghost" label="Cancel" icon="material-symbols:close" @click="cancelDelete" />
+      <UButton
+        variant="solid"
+        color="error"
+        label="Delete"
+        icon="material-symbols:delete"
+        @click="confirmDelete"
+      />
+    </template>
+  </UModal>
 </template>
 
 <style scoped>
