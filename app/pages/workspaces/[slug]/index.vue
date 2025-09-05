@@ -135,10 +135,8 @@
 
         <!-- Main Content Grid -->
         <div class="mt-2 grid gap-10 border-t border-zinc-800 pt-8">
-
           <!-- Radar & Technologies Side by Side (stack on small) -->
           <div class="grid gap-8 grid-cols-1 md:grid-cols-[35%_1fr]">
-
             <!-- Radar Section -->
             <section class="space-y-4">
               <div class="flex items-center justify-between">
@@ -168,10 +166,7 @@
                   </template>
                 </UPopover>
               </div>
-              <TechnologyRadar 
-                v-if="!!technologies"
-                :technologies="technologies"
-              />
+              <TechnologyRadar v-if="!!technologies" :technologies="technologies" />
               <AppEmptyState
                 v-else
                 icon="material-symbols:hub"

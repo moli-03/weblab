@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { Technology } from "~~/shared/types/schema";
+  import { initials } from "~~/shared/utils/initials";
   import * as d3 from "d3";
 
   interface Props {
@@ -37,7 +38,6 @@
   interface TechnologyPoint extends Point {
     technology: Technology;
   }
-
 </script>
 
 <script lang="ts" setup>
@@ -74,7 +74,7 @@
     if (!radarContainer.value) {
       console.error("Radar container not found");
       return;
-    };
+    }
 
     // Clear previous content
     d3.select(radarContainer.value).selectAll("*").remove();
@@ -85,10 +85,10 @@
       console.error("Radar container has no parent element");
       return;
     }
-    
+
     const parentRect = parentElement.getBoundingClientRect();
     const availableWidth = parentRect.width;
-    
+
     // Use the width to calculate radar size, with some padding
     // Ensure minimum size to prevent negative radius
     const outerSize = Math.max(availableWidth, config.minSize);
@@ -104,10 +104,10 @@
       console.error("Calculated radius is non-positive:", radius);
       return;
     }
-    
+
     const center: Point = {
       x: outerSize / 2,
-      y: outerSize / 2
+      y: outerSize / 2,
     };
 
     // Create the background
@@ -123,13 +123,32 @@
     // Main group at the center
     const group = backgroundSvg.append("g").attr("transform", `translate(${center.x}, ${center.y})`);
 
+    // Create clip paths for rounded images (normal and scaled)
+    const defs = backgroundSvg.append("defs");
+    defs
+      .append("clipPath")
+      .attr("id", "image-clip")
+      .append("circle")
+      .attr("cx", 0)
+      .attr("cy", 0)
+      .attr("r", config.imageSize / 2);
+
+    defs
+      .append("clipPath")
+      .attr("id", "image-clip-hover")
+      .append("circle")
+      .attr("cx", 0)
+      .attr("cy", 0)
+      .attr("r", (config.imageSize * config.hoverScaleMultiplier) / 2);
+
     // Draw rings
     for (let i = 0; i < config.rings.length; i++) {
       const ring = config.rings[i]!;
       const ringRadius = getRingRadius(i);
 
       // The circle
-      group.append("circle")
+      group
+        .append("circle")
         .attr("r", ringRadius)
         .attr("fill", "none")
         .attr("stroke", ring.color)
@@ -137,7 +156,8 @@
         .attr("stroke-opacity", config.ringOpacity);
 
       // Ring label
-      group.append("text")
+      group
+        .append("text")
         .attr("x", 0) // Centered
         .attr("y", -ringRadius + 15) // Slightly inside the ring
         .attr("text-anchor", "middle")
@@ -149,10 +169,10 @@
     }
 
     // Draw sector lines
-    const sectorAngle = 2 * Math.PI / config.sectors.length;
+    const sectorAngle = (2 * Math.PI) / config.sectors.length;
     for (let i = 0; i < config.sectors.length; i++) {
       const sector = config.sectors[i]!;
-      const angle = sectorAngle * i; 
+      const angle = sectorAngle * i;
 
       const x1 = 0;
       const y1 = 0;
@@ -161,7 +181,8 @@
       const y2 = Math.sin(angle) * radius;
 
       // Separator line
-      group.append("line")
+      group
+        .append("line")
         .attr("x1", x1)
         .attr("y1", y1)
         .attr("x2", x2)
@@ -175,7 +196,8 @@
       const labelX = Math.cos(angle + sectorAngle / 2) * radius * multiplier;
       const labelY = Math.sin(angle + sectorAngle / 2) * radius * multiplier;
 
-      group.append("text")
+      group
+        .append("text")
         .attr("x", labelX)
         .attr("y", labelY)
         .attr("text-anchor", "middle")
@@ -189,7 +211,6 @@
     // Add the technologies
     const technologyPoints: TechnologyPoint[] = [];
     for (const technology of props.technologies) {
-
       if (technology.status !== "published") {
         continue;
       }
@@ -240,7 +261,7 @@
         const selection = d3.select(this);
         const scaledPointSize = config.pointSize * config.hoverScaleMultiplier;
         const scaledImageSize = config.imageSize * config.hoverScaleMultiplier;
-        
+
         // Scale the circle
         selection
           .select("circle")
@@ -248,7 +269,7 @@
           .duration(200)
           .attr("r", scaledPointSize)
           .style("filter", "drop-shadow(0 4px 8px rgba(0,0,0,0.4))");
-        
+
         // Scale the image if it exists
         selection
           .select("image")
@@ -257,13 +278,21 @@
           .attr("x", -scaledImageSize / 2)
           .attr("y", -scaledImageSize / 2)
           .attr("width", scaledImageSize)
-          .attr("height", scaledImageSize);
+          .attr("height", scaledImageSize)
+          .attr("clip-path", "url(#image-clip-hover)");
+
+        // Scale the text if it exists
+        selection
+          .select("text")
+          .transition()
+          .duration(200)
+          .attr("font-size", 10 * config.hoverScaleMultiplier);
       })
       .on("mouseout", function (event, d) {
         hoveredTechnology.value = null;
         hoveredPoint.value = null;
         const selection = d3.select(this);
-        
+
         // Reset circle scale
         selection
           .select("circle")
@@ -271,7 +300,7 @@
           .duration(200)
           .attr("r", config.pointSize)
           .style("filter", "drop-shadow(0 2px 4px rgba(0,0,0,0.3))");
-        
+
         // Reset image scale
         selection
           .select("image")
@@ -280,7 +309,11 @@
           .attr("x", -config.imageSize / 2)
           .attr("y", -config.imageSize / 2)
           .attr("width", config.imageSize)
-          .attr("height", config.imageSize);
+          .attr("height", config.imageSize)
+          .attr("clip-path", "url(#image-clip)");
+
+        // Reset text scale
+        selection.select("text").transition().duration(200).attr("font-size", 10);
       });
 
     // Technology circles
@@ -295,20 +328,35 @@
       .attr("stroke-width", 1)
       .style("filter", "drop-shadow(0 2px 4px rgba(0,0,0,0.3))");
 
-    // Technology logos (if available)
+    // Technology logos (if available) or initials
     points.each(function (d) {
-      if (!d.technology.logoUrl) {
-        return;
-      }
+      const selection = d3.select(this);
 
-      d3.select(this)
-        .append("image")
-        .attr("href", d.technology.logoUrl)
-        .attr("x", -config.imageSize / 2)
-        .attr("y", -config.imageSize / 2)
-        .attr("width", config.imageSize)
-        .attr("height", config.imageSize)
-        .style("pointer-events", "none");
+      if (d.technology.logoUrl) {
+        // Add logo image
+        selection
+          .append("image")
+          .attr("href", d.technology.logoUrl)
+          .attr("x", -config.imageSize / 2)
+          .attr("y", -config.imageSize / 2)
+          .attr("width", config.imageSize)
+          .attr("height", config.imageSize)
+          .attr("clip-path", "url(#image-clip)")
+          .style("pointer-events", "none");
+      } else {
+        // Add initials text
+        selection
+          .append("text")
+          .attr("x", 0)
+          .attr("y", 0)
+          .attr("text-anchor", "middle")
+          .attr("dominant-baseline", "central")
+          .attr("font-size", 10)
+          .attr("font-weight", "600")
+          .attr("fill", "white")
+          .style("pointer-events", "none")
+          .text(initials(d.technology.name));
+      }
     });
   };
 
@@ -339,9 +387,7 @@
     };
   });
 
-
   window.addEventListener("resize", useDebounceFn(drawRadar, 200));
-  
 </script>
 
 <template>
@@ -349,7 +395,11 @@
     <div ref="radarContainer" />
 
     <!-- Technology details tooltip -->
-    <div v-if="hoveredTechnology" class="absolute z-50 border border-primary bg-zinc-800 rounded-lg shadow-xl w-80" :style="tooltipPosition">
+    <div
+      v-if="hoveredTechnology"
+      class="absolute z-50 border border-primary bg-zinc-800 rounded-lg shadow-xl w-80"
+      :style="tooltipPosition"
+    >
       <TechnologyCard :technology="hoveredTechnology" />
     </div>
   </div>
