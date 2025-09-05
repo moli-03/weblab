@@ -36,7 +36,7 @@
       .min(2, "Slug is required")
       .max(255)
       .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Only lowercase letters, numbers and hyphens"),
-    logoUrl: z.string().url().optional().or(z.literal("")),
+    logoUrl: z.httpUrl().optional().or(z.literal("")),
     isPublic: z.boolean(),
   });
 
@@ -161,23 +161,7 @@
           />
         </UFormField>
 
-        <div class="flex items-center gap-4">
-          <UFormField label="Logo URL" name="logoUrl" class="flex-grow">
-            <UInput
-              v-model="state.logoUrl"
-              class="w-full"
-              placeholder="https://example.com/logo.png"
-              :disabled="isSubmitting"
-            />
-          </UFormField>
-
-          <img
-            v-if="state.logoUrl"
-            :src="state.logoUrl"
-            alt="Logo Preview"
-            class="rounded-lg size-14 object-contain object-center"
-          />
-        </div>
+        <LogoUrlField v-model="state.logoUrl" :disabled="isSubmitting" />
 
         <UFormField label="Visibility" name="isPublic">
           <USelect v-model="state.isPublic" :items="visibilityOptions" class="w-full">

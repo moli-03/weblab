@@ -3,6 +3,10 @@
   import z from "zod";
   import type { Technology } from "~~/shared/types/schema";
 
+  interface Props {
+    workspaceId: string;
+  }
+
   interface Emits {
     (e: "created", technology: Technology): void;
   }
@@ -15,7 +19,11 @@
 </script>
 
 <script lang="ts" setup>
-  const _emit = defineEmits<Emits>();
+  const props = defineProps<Props>();
+  const emit = defineEmits<Emits>();
+
+  const { $authFetch } = useNuxtApp();
+  const toast = useToast();
 
   const form = useTemplateRef("form");
   const isOpen = ref(false);
@@ -29,11 +37,11 @@
       ring: z.enum(["adopt", "trial", "assess", "hold"]).optional(),
       ringDescription: z.string().optional(),
       logoUrl: z.url().optional().or(z.literal("")),
-      shouldPublish: z.boolean(),
+      publish: z.boolean(),
     })
     .refine(
       data => {
-        if (data.shouldPublish && !data.ring) {
+        if (data.publish && !data.ring) {
           return false;
         }
         return true;
@@ -50,7 +58,7 @@
     ring: undefined,
     logoUrl: "",
     ringDescription: "",
-    shouldPublish: false,
+    publish: false,
   });
 
   const categoryOptions: CategoryItem[] = [
@@ -87,8 +95,33 @@
     { label: "Hold", value: "hold" },
   ];
 
-  function onSubmit(event: FormSubmitEvent<Schema>) {
-    console.log(event);
+  async function onSubmit(event: FormSubmitEvent<Schema>) {
+    isSubmitting.value = true;
+    try {
+      const technology = await $authFetch<Technology>(`/api/workspaces/${props.workspaceId}/technologies`, {
+        method: "POST",
+        body: {
+          ...event.data
+        }
+      });
+
+      toast.add({
+        title: "Technology created",
+        icon: "material-symbols:check-circle",
+        color: "success",
+      });
+      emit("created", technology);
+      isOpen.value = false;
+    } catch (error) {
+      console.error("Failed to create technology", error);
+      toast.add({
+        title: "Failed to create technology",
+        icon: "material-symbols:error",
+        color: "error",
+      });
+    } finally {
+      isSubmitting.value = false;
+    }
   }
 </script>
 
@@ -113,7 +146,7 @@
     </template>
 
     <template #body>
-      <UForm ref="form" class="space-y-2" :schema="schema" :state="state" @submit="onSubmit">
+      <UForm ref="form" class="space-y-3" :schema="schema" :state="state" @submit="onSubmit">
         <UFormField name="name" label="Name" required>
           <UInput v-model="state.name" class="w-full" placeholder="e.g. React, Kubernetes, PostgreSQL" />
         </UFormField>
@@ -127,12 +160,14 @@
           />
         </UFormField>
 
+        <LogoUrlField v-model="state.logoUrl" />
+
         <UFormField name="category" label="Category" required>
           <USelect v-model="state.category" :items="categoryOptions" :icon="selectedCategory?.icon" class="w-full" />
         </UFormField>
 
-        <UFormField name="ring" label="Ring" :required="state.shouldPublish">
-          <USelect v-model="state.ring" :items="ringOptions" class="w-full" />
+        <UFormField name="ring" label="Ring" :required="state.publish">
+          <USelect v-model="state.ring" :items="ringOptions" class="w-full" placeholder="Select a ring" />
         </UFormField>
 
         <UFormField v-if="state.ring" name="ringDescription" label="Ring Description">
@@ -144,25 +179,12 @@
           />
         </UFormField>
 
-        <div class="flex items-center gap-4">
-          <UFormField label="Logo URL" name="logoUrl" class="flex-grow">
-            <UInput v-model="state.logoUrl" class="w-full" placeholder="https://example.com/logo.png" />
-          </UFormField>
-
-          <img
-            v-if="state.logoUrl"
-            :src="state.logoUrl"
-            alt="Logo Preview"
-            class="rounded-lg size-14 object-contain object-center"
-          />
-        </div>
-
         <UFormField
-          name="shouldPublish"
+          name="publish"
           label="Publish"
           description="If enabled, this technology will be visible to all members of the workspace."
         >
-          <USwitch v-model="state.shouldPublish" />
+          <USwitch v-model="state.publish" />
         </UFormField>
       </UForm>
     </template>

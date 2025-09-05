@@ -78,21 +78,8 @@ export const requireRole = async (
   return authContext;
 };
 
-export const requireAdmin = async (event: H3Event): Promise<AuthContext> => {
-  const authContext = requireAuth(event);
-
-  const workspaceProfiles = await getUserWorkspaceProfiles(authContext.user.id);
-  const isAdmin = workspaceProfiles.some(profile => profile.role === "admin");
-
-  if (!isAdmin) {
-    throw createError({
-      statusCode: 403,
-      statusMessage: "Forbidden",
-      message: "Admin role required",
-    });
-  }
-
-  return authContext;
+export const requireAdmin = (event: H3Event, workspaceId: string): Promise<AuthContext> => {
+  return requireRole(event, workspaceId, "admin");
 };
 
 export const getAuthContext = (event: H3Event): AuthContext | null => {
