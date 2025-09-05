@@ -26,14 +26,12 @@
 
   // Configuration - responsive sizing
   const config = {
-    maxWidth: 400,
-    maxHeight: 400,
     margin: 20,
     rings: [
-      { name: "adopt", radius: 0.25, color: "#5b9bd5", label: "ADOPT" },
-      { name: "trial", radius: 0.5, color: "#70ad47", label: "TRIAL" },
-      { name: "assess", radius: 0.75, color: "#ffc000", label: "ASSESS" },
-      { name: "hold", radius: 1.0, color: "#c55a5a", label: "HOLD" },
+      { name: "adopt", radius: 0.25, color: "var(--ui-success)", label: "ADOPT" },
+      { name: "trial", radius: 0.5, color: "var(--ui-info)", label: "TRIAL" },
+      { name: "assess", radius: 0.75, color: "var(--ui-warning)", label: "ASSESS" },
+      { name: "hold", radius: 1.0, color: "var(--ui-error)", label: "HOLD" },
     ],
     sectors: [
       { name: "technique", angle: 0, label: "Techniques" },
@@ -49,10 +47,23 @@
     // Clear previous content
     d3.select(radarContainer.value).selectAll("*").remove();
 
-    // Calculate responsive dimensions
-    const containerWidth = radarContainer.value.clientWidth || config.maxWidth;
-    const size = Math.min(containerWidth, config.maxWidth, config.maxHeight);
+    // Calculate responsive dimensions based on parent container
+    const parentElement = radarContainer.value.parentElement;
+    if (!parentElement) return;
+    
+    const parentRect = parentElement.getBoundingClientRect();
+    const availableWidth = parentRect.width;
+    
+    // Use the width to calculate radar size, with some padding
+    // Ensure minimum size to prevent negative radius
+    const minSize = 100; // Minimum radar size
+    const calculatedSize = availableWidth - config.margin * 2;
+    const size = Math.max(calculatedSize, minSize);
     const radius = (size - 2 * config.margin) / 2;
+    
+    // Ensure radius is positive
+    if (radius <= 0) return;
+    
     const center = { x: size / 2, y: size / 2 };
 
     // Create SVG
@@ -61,7 +72,7 @@
       .append("svg")
       .attr("width", size)
       .attr("height", size)
-      .style("background", "rgb(17 24 39)") // dark bg for dark mode
+      .style("background", "var(--color-zinc-800)") // zinc-800 using Tailwind CSS variable
       .style("border-radius", "12px")
       .style("border", "1px solid rgb(55 65 81)");
 
@@ -79,6 +90,17 @@
     gradient.append("stop").attr("offset", "0%").attr("stop-color", "rgba(31, 41, 55, 0.9)");
 
     gradient.append("stop").attr("offset", "100%").attr("stop-color", "rgba(31, 41, 55, 0.1)");
+
+    // Add clipPath for rounded images
+    defs.append("clipPath")
+      .attr("id", "rounded-image")
+      .append("rect")
+      .attr("x", -9)
+      .attr("y", -9)
+      .attr("width", 18)
+      .attr("height", 18)
+      .attr("rx", 3)
+      .attr("ry", 3);
 
     const g = svg.append("g").attr("transform", `translate(${center.x}, ${center.y})`);
 
@@ -159,13 +181,14 @@
 
         // Calculate position with some randomness within the ring/sector
         const ringIndex = config.rings.findIndex(r => r.name === tech.ring);
-        const minRadius = ringIndex === 0 ? radius * 0.2 : radius * (config.rings[ringIndex - 1]?.radius || 0) + 10;
-        const maxRadius = radius * ring.radius - 15;
+        const minRadius = ringIndex === 0 ? radius * 0.2 : radius * (config.rings[ringIndex - 1]?.radius || 0) + 15;
+        const maxRadius = radius * ring.radius - 20;
         const techRadius = minRadius + Math.random() * (maxRadius - minRadius);
 
-        // Add more spread for better visibility
-        const sectorStartAngle = ((sector.angle - 90 - 35) * Math.PI) / 180;
-        const sectorEndAngle = ((sector.angle - 90 + 35) * Math.PI) / 180;
+        // Ensure technologies stay within their sector boundaries
+        // Each sector is a full 90-degree quadrant: 0-90, 90-180, 180-270, 270-360
+        const sectorStartAngle = (sector.angle * Math.PI) / 180;
+        const sectorEndAngle = ((sector.angle + 90) * Math.PI) / 180;
         const techAngle = sectorStartAngle + Math.random() * (sectorEndAngle - sectorStartAngle);
 
         const x = Math.cos(techAngle) * techRadius;
@@ -203,7 +226,7 @@
           .select("circle")
           .transition()
           .duration(200)
-          .attr("r", 9)
+          .attr("r", 18)
           .style("filter", "drop-shadow(0 4px 8px rgba(0,0,0,0.4))");
       })
       .on("mouseout", function (event, d) {
@@ -213,19 +236,19 @@
           .select("circle")
           .transition()
           .duration(200)
-          .attr("r", 6)
+          .attr("r", 14)
           .style("filter", "drop-shadow(0 2px 4px rgba(0,0,0,0.3))");
       });
 
     // Technology circles
     points
       .append("circle")
-      .attr("r", 6)
+      .attr("r", 14)
       .attr("fill", d => {
         const ring = config.rings.find(r => r.name === d.ring);
         return ring?.color || "#6b7280";
       })
-      .attr("stroke", "rgb(17 24 39)")
+      .attr("stroke", "var(--color-zinc-800)")
       .attr("stroke-width", 2)
       .style("filter", "drop-shadow(0 2px 4px rgba(0,0,0,0.3))");
 
@@ -235,38 +258,25 @@
         d3.select(this)
           .append("image")
           .attr("href", d.technology.logoUrl)
-          .attr("x", -4)
-          .attr("y", -4)
-          .attr("width", 8)
-          .attr("height", 8)
-          .style("pointer-events", "none")
-          .style("border-radius", "2px");
+          .attr("x", -9)
+          .attr("y", -9)
+          .attr("width", 18)
+          .attr("height", 18)
+          .attr("clip-path", "url(#rounded-image)")
+          .style("pointer-events", "none");
       }
     });
-
-    // Technology labels
-    points
-      .append("text")
-      .attr("x", 0)
-      .attr("y", 16)
-      .attr("text-anchor", "middle")
-      .attr("font-family", "Inter, system-ui, sans-serif")
-      .attr("font-size", "9px")
-      .attr("font-weight", "500")
-      .attr("fill", "#e5e7eb")
-      .style("pointer-events", "none")
-      .text(d => d.name);
   };
 
   onMounted(() => {
     drawRadar();
 
-    // Add resize observer for responsiveness
-    if (radarContainer.value) {
+    // Add resize observer for responsiveness - observe parent container
+    if (radarContainer.value?.parentElement) {
       const resizeObserver = new ResizeObserver(() => {
         drawRadar();
       });
-      resizeObserver.observe(radarContainer.value);
+      resizeObserver.observe(radarContainer.value.parentElement);
 
       onUnmounted(() => {
         resizeObserver.disconnect();
