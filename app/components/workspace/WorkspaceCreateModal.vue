@@ -109,19 +109,15 @@
 </script>
 
 <template>
-  <UModal :open="isOpen" :ui="{ footer: 'justify-end' }">
+  <UModal :open="isOpen" :ui="{ footer: 'justify-end' }" :close="false">
     <UButton icon="i-heroicons-plus" @click="isOpen = true"> Create workspace </UButton>
 
     <template #header>
-      <div class="flex gap-3 items-center">
-        <div class="size-8 rounded-lg bg-primary/10 flex items-center justify-center">
-          <UIcon name="i-heroicons-rectangle-stack" class="text-lg text-primary" />
-        </div>
-        <div>
-          <h3 class="font-semibold text-lg">Create a new workspace</h3>
-          <p class="text-sm text-gray-500">Set up a workspace to track technologies and decisions</p>
-        </div>
-      </div>
+      <ModalHeader
+        title="Create a new workspace"
+        subtitle="Set up a workspace to track technologies and decisions"
+        icon="i-heroicons-rectangle-stack"
+        />
     </template>
 
     <template #body>
@@ -180,7 +176,7 @@
             :src="state.logoUrl"
             alt="Logo Preview"
             class="rounded-lg size-14 object-contain object-center"
-          />
+          >
         </div>
 
         <UFormField label="Visibility" name="isPublic">
@@ -209,12 +205,19 @@
     </template>
 
     <template #footer>
-      <UButton type="button" variant="ghost" label="Cancel" :disabled="isSubmitting" @click="isOpen = false" />
+      <UButton
+        type="button"
+        variant="ghost"
+        label="Cancel"
+        icon="material-symbols:close"
+        :disabled="isSubmitting"
+        @click="isOpen = false"
+      />
       <UButton
         type="submit"
         color="primary"
         label="Create Workspace"
-        icon="i-heroicons-plus"
+        icon="material-symbols:check"
         :loading="isSubmitting"
         :disabled="isSubmitting"
         @click="form?.submit()"

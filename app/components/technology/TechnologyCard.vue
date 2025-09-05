@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import type { Technology } from "~~/server/database/schema";
+  import type { Technology } from "~~/shared/types/schema";
   import moment from "moment";
   import { initials } from "~~/shared/utils/initials";
 

@@ -180,7 +180,17 @@
                 <h2 class="text-lg font-semibold tracking-tight flex items-center gap-2">
                   <UIcon name="material-symbols:hub" class="text-xl text-primary" /> Technologies
                 </h2>
-                <UButton v-if="isAdmin" size="xs" icon="material-symbols:add" variant="subtle" label="Add" />
+                <TechnologyCreateModal v-if="isAdmin">
+                  <template #default="{ open }">
+                    <UButton
+                      icon="material-symbols:add"
+                      label="Add"
+                      size="sm"
+                      variant="subtle"
+                      @click="open()"
+                    />
+                  </template>
+                </TechnologyCreateModal>
               </div>
               <div>
                 <!-- Loading -->
@@ -197,7 +207,7 @@
                     title="No technologies yet"
                     description="Once added, technologies will appear here organized in groups."
                   >
-                    <UButton v-if="isAdmin" icon="material-symbols:add" label="Add technology" size="sm" />
+                    <TechnologyCreateModal v-if="isAdmin" />
                   </AppEmptyState>
                 </div>
                 <!-- Content -->
