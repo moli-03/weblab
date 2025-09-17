@@ -40,6 +40,18 @@ CREATE TABLE "users" (
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE "workspace_invites" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"token" varchar(255) NOT NULL,
+	"workspace_id" uuid NOT NULL,
+	"inviter_id" uuid NOT NULL,
+	"email" varchar(255),
+	"expires_at" timestamp NOT NULL,
+	"used_at" timestamp,
+	"used_by_id" uuid,
+	"created_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE "workspace_members" (
 	"user_id" uuid NOT NULL,
 	"workspace_id" uuid NOT NULL,
@@ -63,11 +75,17 @@ CREATE TABLE "workspaces" (
 --> statement-breakpoint
 ALTER TABLE "login_audit" ADD CONSTRAINT "login_audit_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "technologies" ADD CONSTRAINT "technologies_workspace_id_workspaces_id_fk" FOREIGN KEY ("workspace_id") REFERENCES "public"."workspaces"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "workspace_invites" ADD CONSTRAINT "workspace_invites_workspace_id_workspaces_id_fk" FOREIGN KEY ("workspace_id") REFERENCES "public"."workspaces"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "workspace_invites" ADD CONSTRAINT "workspace_invites_inviter_id_users_id_fk" FOREIGN KEY ("inviter_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "workspace_invites" ADD CONSTRAINT "workspace_invites_used_by_id_users_id_fk" FOREIGN KEY ("used_by_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "workspace_members" ADD CONSTRAINT "workspace_members_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "workspace_members" ADD CONSTRAINT "workspace_members_workspace_id_workspaces_id_fk" FOREIGN KEY ("workspace_id") REFERENCES "public"."workspaces"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "workspaces" ADD CONSTRAINT "workspaces_owner_id_users_id_fk" FOREIGN KEY ("owner_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 CREATE UNIQUE INDEX "workspace_technology_idx" ON "technologies" USING btree ("workspace_id","name");--> statement-breakpoint
 CREATE UNIQUE INDEX "email_idx" ON "users" USING btree ("email");--> statement-breakpoint
+CREATE UNIQUE INDEX "workspace_invite_token_idx" ON "workspace_invites" USING btree ("token");--> statement-breakpoint
+CREATE INDEX "workspace_invite_workspace_idx" ON "workspace_invites" USING btree ("workspace_id");--> statement-breakpoint
+CREATE INDEX "workspace_invite_expires_idx" ON "workspace_invites" USING btree ("expires_at");--> statement-breakpoint
 CREATE UNIQUE INDEX "workspace_name_idx" ON "workspaces" USING btree ("name");--> statement-breakpoint
 CREATE UNIQUE INDEX "workspace_slug_idx" ON "workspaces" USING btree ("slug");--> statement-breakpoint
 CREATE INDEX "workspace_owner_idx" ON "workspaces" USING btree ("owner_id");

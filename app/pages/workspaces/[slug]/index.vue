@@ -120,18 +120,15 @@
     }
   }
 
-  function onTechnologyUpdated(updatedTech: Technology) {
-    if (technologies.value && Array.isArray(technologies.value)) {
-      const index = technologies.value.findIndex(t => t.id === updatedTech.id);
-      if (index !== -1) {
-        // Create a new array to trigger reactivity
-        technologies.value = [
-          ...technologies.value.slice(0, index),
-          updatedTech,
-          ...technologies.value.slice(index + 1),
-        ];
-      }
-    }
+  function onTechnologyUpdated(_updatedTech: Technology) {
+    // Refresh the technologies list to ensure we have the latest data
+    refreshTechnologies();
+  }
+
+  function onMemberInvited() {
+    // Refresh members list when someone is invited
+    // Note: The member won't appear until they accept the invite
+    // but we could add a toast message here if needed
   }
 </script>
 
@@ -250,7 +247,7 @@
               <h2 class="text-lg font-semibold tracking-tight flex items-center gap-2">
                 <UIcon name="material-symbols:group" class="text-xl text-primary" /> Members
               </h2>
-              <UButton v-if="canEditTechnologies" size="xs" icon="material-symbols:person-add" variant="ghost" label="Invite" />
+              <WorkspaceInviteModal v-if="canEditTechnologies && workspace" :workspace-id="workspace.id" @invited="onMemberInvited" />
             </div>
             <div v-if="membersStatus === 'pending'" class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               <USkeleton v-for="n in 3" :key="n" class="h-14" />

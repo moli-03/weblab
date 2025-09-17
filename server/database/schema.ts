@@ -111,11 +111,37 @@ export const technologies = pgTable(
   ],
 );
 
+export const workspaceInvites = pgTable(
+  "workspace_invites",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    token: varchar("token", { length: 255 }).notNull(),
+    workspaceId: uuid("workspace_id")
+      .notNull()
+      .references(() => workspaces.id, { onDelete: "cascade" }),
+    inviterId: uuid("inviter_id")
+      .notNull()
+      .references(() => users.id),
+    email: varchar("email", { length: 255 }), // Optional: for targeted invites
+    expiresAt: timestamp("expires_at", { mode: "string" }).notNull(),
+    usedAt: timestamp("used_at", { mode: "string" }),
+    usedById: uuid("used_by_id").references(() => users.id),
+    createdAt: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),
+  },
+  table => [
+    uniqueIndex("workspace_invite_token_idx").on(table.token),
+    index("workspace_invite_workspace_idx").on(table.workspaceId),
+    index("workspace_invite_expires_idx").on(table.expiresAt),
+  ],
+);
+
 // Relations
 export const userRelations = relations(users, ({ many }) => ({
   workspaceMembers: many(workspaceMembers),
   loginAudits: many(loginAudit),
   ownedWorkspaces: many(workspaces),
+  sentInvites: many(workspaceInvites, { relationName: "inviter" }),
+  usedInvites: many(workspaceInvites, { relationName: "invitee" }),
 }));
 
 export const workspaceRelations = relations(workspaces, ({ many, one }) => ({
@@ -125,6 +151,7 @@ export const workspaceRelations = relations(workspaces, ({ many, one }) => ({
     references: [users.id],
   }),
   technologies: many(technologies),
+  invites: many(workspaceInvites),
 }));
 
 export const technologyRelations = relations(technologies, ({ one }) => ({
@@ -145,6 +172,23 @@ export const workspaceMemberRelations = relations(workspaceMembers, ({ one }) =>
   }),
 }));
 
+export const workspaceInviteRelations = relations(workspaceInvites, ({ one }) => ({
+  workspace: one(workspaces, {
+    fields: [workspaceInvites.workspaceId],
+    references: [workspaces.id],
+  }),
+  inviter: one(users, {
+    fields: [workspaceInvites.inviterId],
+    references: [users.id],
+    relationName: "inviter",
+  }),
+  usedBy: one(users, {
+    fields: [workspaceInvites.usedById],
+    references: [users.id],
+    relationName: "invitee",
+  }),
+}));
+
 // Types
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
@@ -158,3 +202,6 @@ export type NewWorkspaceMember = typeof workspaceMembers.$inferInsert;
 
 export type Technology = typeof technologies.$inferSelect;
 export type NewTechnology = typeof technologies.$inferInsert;
+
+export type WorkspaceInvite = typeof workspaceInvites.$inferSelect;
+export type NewWorkspaceInvite = typeof workspaceInvites.$inferInsert;
