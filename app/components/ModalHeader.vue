@@ -16,8 +16,8 @@
       <UIcon :name="icon" class="text-lg text-primary" />
     </div>
     <div>
-      <h3 class="font-semibold text-lg">{{ title }}</h3>
-      <p class="text-sm text-gray-500">{{ subtitle }}</p>
+      <h3 class="font-semibold text-lg text-gray-900 dark:text-gray-100">{{ title }}</h3>
+      <p class="text-sm text-gray-500 dark:text-gray-400">{{ subtitle }}</p>
     </div>
   </div>
 </template>

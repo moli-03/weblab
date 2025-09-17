@@ -129,7 +129,7 @@
 </script>
 
 <template>
-  <UContainer class="max-w-2xl py-20">
+  <UContainer class="max-w-2xl py-16">
     <!-- Loading State -->
     <div v-if="pending" class="text-center">
       <USkeleton class="h-8 w-64 mx-auto mb-4" />
@@ -138,13 +138,16 @@
     </div>
 
     <!-- Error State -->
-    <div v-else-if="error" class="text-center">
-      <div class="rounded-lg border border-red-200 bg-red-50 p-8">
-        <UIcon name="material-symbols:error" class="text-red-600 text-4xl mb-4" />
-        <h1 class="text-2xl font-bold text-red-800 mb-2">Invalid Invite</h1>
-        <p class="text-red-700 mb-6">
-          This invite link is invalid or has been removed. Please contact the person who sent you this invite.
-        </p>
+    <div v-else-if="error" class="max-w-xl mx-auto">
+      <UAlert
+        color="error"
+        variant="soft"
+        icon="material-symbols:error"
+        title="Invalid Invite"
+        description="This invite link is invalid or has been removed. Please contact the person who sent you this invite."
+        class="mb-4"
+      />
+      <div class="text-center">
         <UButton 
           to="/workspaces"
           icon="material-symbols:arrow-back"
@@ -155,14 +158,17 @@
     </div>
 
     <!-- Success State -->
-    <div v-else-if="acceptanceResult" class="text-center">
-      <div class="rounded-lg border border-green-200 bg-green-50 p-8">
-        <UIcon name="material-symbols:check-circle" class="text-green-600 text-4xl mb-4" />
-        <h1 class="text-2xl font-bold text-green-800 mb-2">Welcome!</h1>
-        <p class="text-green-700 mb-6">
-          {{ acceptanceResult.message }}
-        </p>
-        <p class="text-sm text-green-600 mb-4">Redirecting you to the workspace...</p>
+    <div v-else-if="acceptanceResult" class="max-w-xl mx-auto">
+      <UAlert
+        color="success"
+        variant="soft"
+        icon="material-symbols:check-circle"
+        title="Welcome!"
+        :description="acceptanceResult.message"
+        class="mb-4"
+      />
+      <p class="text-center text-sm text-green-500 mb-4">Redirecting you to the workspace...</p>
+      <div class="text-center">
         <UButton 
           :to="`/workspaces/${acceptanceResult.workspace.slug}`"
           icon="material-symbols:arrow-forward"
@@ -178,7 +184,7 @@
       <div class="mb-6">
         <div
           v-if="inviteInfo.workspace.logoUrl"
-          class="w-16 h-16 mx-auto rounded-lg bg-gray-100 overflow-hidden"
+          class="w-16 h-16 mx-auto rounded-lg bg-gray-100 dark:bg-zinc-800 overflow-hidden ring-1 ring-black/5 dark:ring-white/10"
         >
           <img
             :src="inviteInfo.workspace.logoUrl"
@@ -188,65 +194,64 @@
         </div>
         <div
           v-else
-          class="w-16 h-16 mx-auto rounded-lg bg-primary-100 flex items-center justify-center"
+          class="w-16 h-16 mx-auto rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center ring-1 ring-black/5 dark:ring-white/10"
         >
-          <span class="text-primary-600 font-bold text-xl">
+          <span class="text-primary-600 dark:text-primary-400 font-bold text-xl">
             {{ inviteInfo.workspace.name.charAt(0).toUpperCase() }}
           </span>
         </div>
       </div>
 
       <!-- Title and Description -->
-      <h1 class="text-3xl font-bold text-gray-900 mb-2">
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
         Join {{ inviteInfo.workspace.name }}
       </h1>
       
-      <p v-if="inviteInfo.workspace.description" class="text-gray-600 mb-6 max-w-md mx-auto">
+      <p v-if="inviteInfo.workspace.description" class="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
         {{ inviteInfo.workspace.description }}
       </p>
 
       <!-- Inviter Info -->
-      <div class="bg-gray-50 rounded-lg p-4 mb-6 max-w-sm mx-auto">
-        <p class="text-sm text-gray-600 mb-1">Invited by</p>
-        <p class="font-medium text-gray-900">{{ inviteInfo.inviter.name }}</p>
-        <p class="text-sm text-gray-500">{{ inviteInfo.inviter.email }}</p>
-      </div>
+      <UCard class="mb-6 max-w-sm mx-auto text-left" :ui="{ body: 'p-4' }">
+        <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Invited by</p>
+        <p class="font-medium text-gray-900 dark:text-gray-100">{{ inviteInfo.inviter.name }}</p>
+        <p class="text-sm text-gray-500 dark:text-gray-400">{{ inviteInfo.inviter.email }}</p>
+      </UCard>
 
       <!-- Invite Status -->
       <div v-if="inviteInfo.isExpired || inviteInfo.isUsed" class="mb-6">
-        <div 
-          v-if="inviteInfo.isExpired" 
-          class="rounded-lg border border-orange-200 bg-orange-50 p-4 max-w-md mx-auto"
-        >
-          <UIcon name="material-symbols:schedule" class="text-orange-600 text-xl mb-2" />
-          <h3 class="font-medium text-orange-800 mb-1">Invite Expired</h3>
-          <p class="text-sm text-orange-700">
-            This invite expired on {{ formattedExpiry }}. Please ask for a new invite.
-          </p>
-        </div>
+        <UAlert
+          v-if="inviteInfo.isExpired"
+          color="warning"
+          variant="soft"
+          icon="material-symbols:schedule"
+          title="Invite Expired"
+          :description="`This invite expired on ${formattedExpiry}. Please ask for a new invite.`"
+          class="max-w-md mx-auto"
+        />
 
-        <div 
-          v-else-if="inviteInfo.isUsed" 
-          class="rounded-lg border border-gray-200 bg-gray-50 p-4 max-w-md mx-auto"
-        >
-          <UIcon name="material-symbols:check-circle" class="text-gray-600 text-xl mb-2" />
-          <h3 class="font-medium text-gray-800 mb-1">Invite Already Used</h3>
-          <p class="text-sm text-gray-700">
-            This invite has already been used and cannot be used again.
-          </p>
-        </div>
+        <UAlert
+          v-else-if="inviteInfo.isUsed"
+          color="neutral"
+          variant="soft"
+          icon="material-symbols:check-circle"
+          title="Invite Already Used"
+          description="This invite has already been used and cannot be used again."
+          class="max-w-md mx-auto"
+        />
       </div>
 
       <!-- Action Buttons -->
       <div v-else class="space-y-4">
         <!-- Login Required -->
         <div v-if="needsLogin" class="space-y-4">
-          <div class="rounded-lg border border-blue-200 bg-blue-50 p-4 max-w-md mx-auto mb-4">
-            <UIcon name="material-symbols:info" class="text-blue-600 text-xl mb-2" />
-            <p class="text-sm text-blue-700">
-              You need to be logged in to accept this invite.
-            </p>
-          </div>
+          <UAlert
+            color="info"
+            variant="soft"
+            icon="material-symbols:info"
+            description="You need to be logged in to accept this invite."
+            class="max-w-md mx-auto"
+          />
           
           <div class="flex gap-3 justify-center">
             <UButton
@@ -276,13 +281,13 @@
             @click="acceptInvite"
           />
           
-          <p class="text-xs text-gray-500">
+          <p class="text-xs text-gray-500 dark:text-gray-400">
             By accepting, you'll be added as a member of this workspace.
           </p>
         </div>
 
         <!-- Expiry Information -->
-        <div class="text-xs text-gray-400 pt-4">
+        <div class="text-xs text-gray-400 dark:text-gray-500 pt-4">
           <p>This invite expires on {{ formattedExpiry }}</p>
         </div>
       </div>

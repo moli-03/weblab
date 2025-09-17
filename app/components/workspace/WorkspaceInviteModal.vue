@@ -140,7 +140,7 @@
 
     <template #body>
       <div v-if="!generatedInvite">
-        <UForm ref="form" class="space-y-4" :schema="schema" :state="state" @submit="onSubmit">
+        <UForm ref="form" class="space-y-6" :schema="schema" :state="state" @submit="onSubmit">
           <UFormField 
             name="email" 
             label="Email (Optional)" 
@@ -156,41 +156,55 @@
         </UForm>
       </div>
 
-      <div v-else class="space-y-4">
-        <div class="rounded-lg border border-green-200 bg-green-50 p-4">
-          <div class="flex items-center gap-2 mb-2">
-            <UIcon name="material-symbols:check-circle" class="text-green-600" />
-            <h3 class="font-medium text-green-800">Invite link generated!</h3>
-          </div>
-          <p class="text-sm text-green-700 mb-3">
-            Share this link with the person you want to invite. The link will expire on {{ expiresAtFormatted }}.
-          </p>
-          
-          <div class="flex items-center gap-2">
-            <UInput
-              :value="generatedInvite.inviteUrl"
-              readonly
-              class="flex-1"
-              size="sm"
-            />
-            <UButton
-              icon="material-symbols:content-copy"
-              variant="outline"
-              size="sm"
-              @click="copyInviteLink"
-            />
-          </div>
+      <div v-else class="space-y-5">
+        <UAlert
+          color="success"
+          variant="soft"
+          icon="material-symbols:check-circle"
+          title="Invite link generated!"
+          :description="`Share this link with the person you want to invite. The link will expire on ${expiresAtFormatted}.`"
+        />
+
+        <div class="space-y-2">
+          <label class="block text-xs font-medium text-gray-600 dark:text-gray-400">Invite link</label>
+          <UInput
+            :model-value="generatedInvite.inviteUrl"
+            readonly
+            size="md"
+            class="w-full"
+            @focus="$event.target?.select?.()"
+          >
+            <template #trailing>
+              <UButton
+                color="primary"
+                variant="soft"
+                icon="material-symbols:content-copy"
+                size="xs"
+                aria-label="Copy invite link"
+                @click.stop="copyInviteLink"
+              />
+            </template>
+          </UInput>
         </div>
 
-        <div v-if="generatedInvite.email" class="text-sm text-gray-600">
-          <strong>Associated email:</strong> {{ generatedInvite.email }}
+        <div v-if="generatedInvite.email" class="text-sm text-gray-600 dark:text-gray-400">
+          <UBadge color="neutral" variant="soft" size="xs" class="mr-2">Associated email</UBadge>
+          {{ generatedInvite.email }}
         </div>
 
-        <div class="text-xs text-gray-500 space-y-1">
-          <p>• This link can only be used once</p>
-          <p>• The link will expire in 24 hours</p>
-          <p>• The person will be added as a regular member (customer role)</p>
-        </div>
+        <UAlert
+          color="neutral"
+          variant="subtle"
+          icon="material-symbols:info"
+        >
+          <template #description>
+            <ul class="list-disc pl-5 space-y-1 text-xs text-gray-600 dark:text-gray-400">
+              <li>This link can only be used once</li>
+              <li>The link will expire in 24 hours</li>
+              <li>The person will be added as a regular member (customer role)</li>
+            </ul>
+          </template>
+        </UAlert>
       </div>
     </template>
 
