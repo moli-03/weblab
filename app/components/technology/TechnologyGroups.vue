@@ -10,6 +10,7 @@
 
   interface Emits {
     (e: "deleted", technologyId: string): void;
+    (e: "updated", technology: Technology): void;
   }
 
   interface ExtendedAccordionItem extends AccordionItem {
@@ -22,17 +23,11 @@
   });
   const emit = defineEmits<Emits>();
 
-  // Maintain a local shallow copy so we can optimistically update on delete
-  const localTechnologies = ref<Technology[]>([...props.technologies]);
-  watch(
-    () => props.technologies,
-    newVal => {
-      localTechnologies.value = [...newVal];
-    },
-  );
-
+  // Use technologies directly from props for display, but maintain deletingIds for optimistic updates
+  const displayTechnologies = computed(() => props.technologies);
+  
   const getTechniquesForCategory = (category: Technology["category"]) => {
-    return localTechnologies.value.filter(tech => tech.category === category);
+    return displayTechnologies.value.filter(tech => tech.category === category);
   };
 
   const accordionItems = computed<ExtendedAccordionItem[]>(() => [
@@ -66,12 +61,30 @@
   const toast = useToast();
   const deletingIds = ref<Set<string>>(new Set());
 
+  // Edit modal state
+  const editModalOpen = ref(false);
+  const editingTechnology = ref<Technology | null>(null);
+
+  async function handleEdit(tech: Technology) {
+    editingTechnology.value = tech;
+    editModalOpen.value = true;
+  }
+
+  function handleEditModalClose() {
+    editModalOpen.value = false;
+    editingTechnology.value = null;
+  }
+
+  function handleTechnologyUpdated(updatedTechnology: Technology) {
+    // Just emit the update - let the parent component handle the state management
+    emit("updated", updatedTechnology);
+    handleEditModalClose();
+  }
+
   async function handleDelete(tech: Technology) {
     if (deletingIds.value.has(tech.id)) return;
     deletingIds.value.add(tech.id);
-    const prev = [...localTechnologies.value];
-    // Optimistic removal
-    localTechnologies.value = localTechnologies.value.filter(t => t.id !== tech.id);
+    
     try {
       await $authFetch(`/api/workspaces/${tech.workspaceId}/technologies/${tech.id}`, { method: "DELETE" });
       toast.add({
@@ -82,8 +95,6 @@
       emit("deleted", tech.id);
     } catch (error) {
       console.error("Failed to delete technology", error);
-      // Revert
-      localTechnologies.value = prev;
       toast.add({
         title: "Failed to delete technology",
         icon: "material-symbols:error",
@@ -130,10 +141,24 @@
         />
       </div>
       <div v-else class="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 py-2">
-        <div v-for="tech in item.techniques" :key="tech.id" class="h-fit">
-          <TechnologyCard :technology="tech" :editable="editable" @delete="handleDelete(tech)" />
+        <div v-for="tech in item.techniques" :key="`${tech.id}-${tech.updatedAt}`" class="h-fit">
+          <TechnologyCard 
+            :technology="tech" 
+            :editable="editable" 
+            @delete="handleDelete(tech)" 
+            @edit="handleEdit(tech)" 
+          />
         </div>
       </div>
     </template>
   </UAccordion>
+
+  <!-- Edit Modal -->
+  <TechnologyEditModal
+    v-if="editingTechnology"
+    :technology="editingTechnology"
+    :open="editModalOpen"
+    @updated="handleTechnologyUpdated"
+    @close="handleEditModalClose"
+  />
 </template>

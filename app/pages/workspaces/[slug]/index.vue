@@ -1,7 +1,7 @@
 <script lang="ts" setup>
   import type { BreadcrumbItem, ToastProps } from "@nuxt/ui";
   import z from "zod";
-  import type { WorkspaceWithOwner } from "~~/shared/types/schema";
+  import type { WorkspaceWithOwner, Technology } from "~~/shared/types/schema";
   import { FetchError } from "ofetch";
 
   const { $authFetch } = useNuxtApp();
@@ -104,7 +104,9 @@
 
   // Derived state
   const isOwner = computed(() => (workspace.value && user.value?.id === workspace.value.ownerId) || false);
-  const isAdmin = computed(() => (workspace.value && workspace.value.memberRole === "admin") || false);
+  const canEditTechnologies = computed(() => 
+    !!(workspace.value && (workspace.value.memberRole === "admin" || workspace.value.memberRole === "cto"))
+  );
 
   // Breadcrumbs for UBreadcrumb (Nuxt UI expects label + optional to)
   const breadcrumbs = computed<BreadcrumbItem[]>(() => [
@@ -115,6 +117,20 @@
   function onTechnologyDeleted(id: string) {
     if (technologies.value && Array.isArray(technologies.value)) {
       technologies.value = technologies.value.filter(t => t.id !== id);
+    }
+  }
+
+  function onTechnologyUpdated(updatedTech: Technology) {
+    if (technologies.value && Array.isArray(technologies.value)) {
+      const index = technologies.value.findIndex(t => t.id === updatedTech.id);
+      if (index !== -1) {
+        // Create a new array to trigger reactivity
+        technologies.value = [
+          ...technologies.value.slice(0, index),
+          updatedTech,
+          ...technologies.value.slice(index + 1),
+        ];
+      }
     }
   }
 </script>
@@ -187,7 +203,7 @@
                 <h2 class="text-lg font-semibold tracking-tight flex items-center gap-2">
                   <UIcon name="material-symbols:hub" class="text-xl text-primary" /> Technologies
                 </h2>
-                <TechnologyCreateModal v-if="isAdmin" :workspace-id="workspace.id" @created="refreshTechnologies()">
+                <TechnologyCreateModal v-if="canEditTechnologies" :workspace-id="workspace.id" @created="refreshTechnologies()">
                   <template #default="{ open }">
                     <UButton icon="material-symbols:add" label="Add" size="sm" variant="subtle" @click="open()" />
                   </template>
@@ -209,7 +225,7 @@
                     description="Once added, technologies will appear here organized in groups."
                   >
                     <TechnologyCreateModal
-                      v-if="isAdmin"
+                      v-if="canEditTechnologies"
                       :workspace-id="workspace.id"
                       @created="refreshTechnologies()"
                     />
@@ -217,7 +233,12 @@
                 </div>
                 <!-- Content -->
                 <div v-else-if="!!technologies">
-                  <TechnologyGroups :technologies="technologies" :editable="isAdmin" @deleted="onTechnologyDeleted" />
+                  <TechnologyGroups 
+                    :technologies="technologies" 
+                    :editable="canEditTechnologies" 
+                    @deleted="onTechnologyDeleted" 
+                    @updated="onTechnologyUpdated"
+                  />
                 </div>
               </div>
             </section>
@@ -229,7 +250,7 @@
               <h2 class="text-lg font-semibold tracking-tight flex items-center gap-2">
                 <UIcon name="material-symbols:group" class="text-xl text-primary" /> Members
               </h2>
-              <UButton v-if="isAdmin" size="xs" icon="material-symbols:person-add" variant="ghost" label="Invite" />
+              <UButton v-if="canEditTechnologies" size="xs" icon="material-symbols:person-add" variant="ghost" label="Invite" />
             </div>
             <div v-if="membersStatus === 'pending'" class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               <USkeleton v-for="n in 3" :key="n" class="h-14" />
