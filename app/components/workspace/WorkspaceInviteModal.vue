@@ -60,7 +60,7 @@
       });
 
       generatedInvite.value = invite;
-      
+
       toast.add({
         title: "Invite created",
         icon: "material-symbols:check-circle",
@@ -82,7 +82,7 @@
 
   async function copyInviteLink() {
     if (!generatedInvite.value) return;
-    
+
     try {
       await navigator.clipboard.writeText(generatedInvite.value.inviteUrl);
       toast.add({
@@ -141,17 +141,12 @@
     <template #body>
       <div v-if="!generatedInvite">
         <UForm ref="form" class="space-y-6" :schema="schema" :state="state" @submit="onSubmit">
-          <UFormField 
-            name="email" 
-            label="Email (Optional)" 
+          <UFormField
+            name="email"
+            label="Email (Optional)"
             help="If provided, the invite will be associated with this email address"
           >
-            <UInput 
-              v-model="state.email" 
-              class="w-full" 
-              placeholder="user@example.com"
-              type="email"
-            />
+            <UInput v-model="state.email" class="w-full" placeholder="user@example.com" type="email" />
           </UFormField>
         </UForm>
       </div>
@@ -192,11 +187,7 @@
           {{ generatedInvite.email }}
         </div>
 
-        <UAlert
-          color="neutral"
-          variant="subtle"
-          icon="material-symbols:info"
-        >
+        <UAlert color="neutral" variant="subtle" icon="material-symbols:info">
           <template #description>
             <ul class="list-disc pl-5 space-y-1 text-xs text-gray-600 dark:text-gray-400">
               <li>This link can only be used once</li>
@@ -209,13 +200,13 @@
     </template>
 
     <template #footer>
-      <UButton 
+      <UButton
         v-if="!generatedInvite"
-        variant="ghost" 
-        label="Cancel" 
-        icon="material-symbols:close" 
-        :disabled="isSubmitting" 
-        @click="close" 
+        variant="ghost"
+        label="Cancel"
+        icon="material-symbols:close"
+        :disabled="isSubmitting"
+        @click="close"
       />
       <UButton
         v-if="!generatedInvite"
@@ -227,7 +218,7 @@
         :disabled="isSubmitting"
         @click="form?.submit()"
       />
-      
+
       <UButton
         v-if="generatedInvite"
         variant="solid"

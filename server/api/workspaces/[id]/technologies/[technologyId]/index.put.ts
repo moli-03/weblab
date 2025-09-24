@@ -67,9 +67,7 @@ export default defineEventHandler(async event => {
         ringDescription: parsedBody.ringDescription,
         logoUrl: parsedBody.logoUrl || null,
         status: parsedBody.publish ? "published" : "draft",
-        publishedAt: parsedBody.publish 
-          ? (existing.publishedAt || new Date().toISOString()) 
-          : null,
+        publishedAt: parsedBody.publish ? existing.publishedAt || new Date().toISOString() : null,
         updatedAt: new Date().toISOString(),
       })
       .where(and(eq(technologies.id, technologyId), eq(technologies.workspaceId, workspaceId)))

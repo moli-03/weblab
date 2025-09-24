@@ -66,9 +66,7 @@
 
   // Set page title
   useHead(() => ({
-    title: inviteInfo.value
-      ? `Join ${inviteInfo.value.workspace.name} – Workspace Invite`
-      : "Workspace Invite",
+    title: inviteInfo.value ? `Join ${inviteInfo.value.workspace.name} – Workspace Invite` : "Workspace Invite",
   }));
 
   // Handle invite acceptance
@@ -95,9 +93,16 @@
       }, 2000);
     } catch (error: unknown) {
       console.error("Failed to accept invite:", error);
-      
+
       let errorMessage = "Failed to join workspace";
-      if (error && typeof error === "object" && "data" in error && error.data && typeof error.data === "object" && "message" in error.data) {
+      if (
+        error &&
+        typeof error === "object" &&
+        "data" in error &&
+        error.data &&
+        typeof error.data === "object" &&
+        "message" in error.data
+      ) {
         errorMessage = String(error.data.message);
       }
 
@@ -148,12 +153,7 @@
         class="mb-4"
       />
       <div class="text-center">
-        <UButton 
-          to="/workspaces"
-          icon="material-symbols:arrow-back"
-          label="Browse Workspaces"
-          variant="outline"
-        />
+        <UButton to="/workspaces" icon="material-symbols:arrow-back" label="Browse Workspaces" variant="outline" />
       </div>
     </div>
 
@@ -169,7 +169,7 @@
       />
       <p class="text-center text-sm text-green-500 mb-4">Redirecting you to the workspace...</p>
       <div class="text-center">
-        <UButton 
+        <UButton
           :to="`/workspaces/${acceptanceResult.workspace.slug}`"
           icon="material-symbols:arrow-forward"
           label="Go to Workspace"
@@ -190,7 +190,7 @@
             :src="inviteInfo.workspace.logoUrl"
             :alt="inviteInfo.workspace.name"
             class="w-full h-full object-cover"
-          >
+          />
         </div>
         <div
           v-else
@@ -203,10 +203,8 @@
       </div>
 
       <!-- Title and Description -->
-      <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-        Join {{ inviteInfo.workspace.name }}
-      </h1>
-      
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Join {{ inviteInfo.workspace.name }}</h1>
+
       <p v-if="inviteInfo.workspace.description" class="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
         {{ inviteInfo.workspace.description }}
       </p>
@@ -252,20 +250,10 @@
             description="You need to be logged in to accept this invite."
             class="max-w-md mx-auto"
           />
-          
+
           <div class="flex gap-3 justify-center">
-            <UButton
-              to="/auth/login"
-              icon="material-symbols:login"
-              label="Log In"
-              color="primary"
-            />
-            <UButton
-              to="/auth/register"
-              icon="material-symbols:person-add"
-              label="Sign Up"
-              variant="outline"
-            />
+            <UButton to="/auth/login" icon="material-symbols:login" label="Log In" color="primary" />
+            <UButton to="/auth/register" icon="material-symbols:person-add" label="Sign Up" variant="outline" />
           </div>
         </div>
 
@@ -280,7 +268,7 @@
             :disabled="isAccepting"
             @click="acceptInvite"
           />
-          
+
           <p class="text-xs text-gray-500 dark:text-gray-400">
             By accepting, you'll be added as a member of this workspace.
           </p>
@@ -296,5 +284,5 @@
 </template>
 
 <style scoped>
-/* Add any additional styling if needed */
+  /* Add any additional styling if needed */
 </style>

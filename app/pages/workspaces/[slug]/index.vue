@@ -84,7 +84,11 @@
     { immediate: false, watch: [workspace] },
   );
 
-  const { data: members, status: membersStatus } = useAsyncData(
+  const {
+    data: members,
+    status: membersStatus,
+    refresh: refreshMembers,
+  } = useAsyncData(
     async () => {
       if (workspace.value) {
         try {
@@ -104,9 +108,10 @@
 
   // Derived state
   const isOwner = computed(() => (workspace.value && user.value?.id === workspace.value.ownerId) || false);
-  const canEditTechnologies = computed(() => 
-    !!(workspace.value && (workspace.value.memberRole === "admin" || workspace.value.memberRole === "cto"))
+  const canEditTechnologies = computed(
+    () => !!(workspace.value && (workspace.value.memberRole === "admin" || workspace.value.memberRole === "cto")),
   );
+  const canManageMembers = computed(() => !!(workspace.value && workspace.value.memberRole === "admin"));
 
   // Breadcrumbs for UBreadcrumb (Nuxt UI expects label + optional to)
   const breadcrumbs = computed<BreadcrumbItem[]>(() => [
@@ -125,10 +130,9 @@
     refreshTechnologies();
   }
 
-  function onMemberInvited() {
-    // Refresh members list when someone is invited
-    // Note: The member won't appear until they accept the invite
-    // but we could add a toast message here if needed
+  function onMemberRoleChanged() {
+    // Refresh the members list when a role is changed
+    refreshMembers();
   }
 </script>
 
@@ -200,7 +204,11 @@
                 <h2 class="text-lg font-semibold tracking-tight flex items-center gap-2">
                   <UIcon name="material-symbols:hub" class="text-xl text-primary" /> Technologies
                 </h2>
-                <TechnologyCreateModal v-if="canEditTechnologies" :workspace-id="workspace.id" @created="refreshTechnologies()">
+                <TechnologyCreateModal
+                  v-if="canEditTechnologies"
+                  :workspace-id="workspace.id"
+                  @created="refreshTechnologies()"
+                >
                   <template #default="{ open }">
                     <UButton icon="material-symbols:add" label="Add" size="sm" variant="subtle" @click="open()" />
                   </template>
@@ -230,10 +238,10 @@
                 </div>
                 <!-- Content -->
                 <div v-else-if="!!technologies">
-                  <TechnologyGroups 
-                    :technologies="technologies" 
-                    :editable="canEditTechnologies" 
-                    @deleted="onTechnologyDeleted" 
+                  <TechnologyGroups
+                    :technologies="technologies"
+                    :editable="canEditTechnologies"
+                    @deleted="onTechnologyDeleted"
                     @updated="onTechnologyUpdated"
                   />
                 </div>
@@ -247,7 +255,7 @@
               <h2 class="text-lg font-semibold tracking-tight flex items-center gap-2">
                 <UIcon name="material-symbols:group" class="text-xl text-primary" /> Members
               </h2>
-              <WorkspaceInviteModal v-if="canEditTechnologies && workspace" :workspace-id="workspace.id" @invited="onMemberInvited" />
+              <WorkspaceInviteModal v-if="canEditTechnologies && workspace" :workspace-id="workspace.id" />
             </div>
             <div v-if="membersStatus === 'pending'" class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               <USkeleton v-for="n in 3" :key="n" class="h-14" />
@@ -256,7 +264,15 @@
               No members yet.
             </div>
             <ul v-else class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              <WorkspaceMemberCard v-for="m in members" :key="m.id" :member="m" />
+              <WorkspaceMemberCard
+                v-for="m in members"
+                :key="m.id"
+                :member="m"
+                :workspace-id="workspace.id"
+                :can-manage-members="canManageMembers"
+                :current-user-id="user?.id"
+                @role-changed="onMemberRoleChanged"
+              />
             </ul>
           </section>
         </div>

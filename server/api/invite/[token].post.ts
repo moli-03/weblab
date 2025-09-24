@@ -56,7 +56,7 @@ export default defineEventHandler(async event => {
     const existingMember = await db.query.workspaceMembers.findFirst({
       where: and(
         eq(workspaceMembers.userId, authContext.user.id),
-        eq(workspaceMembers.workspaceId, invite.workspaceId)
+        eq(workspaceMembers.workspaceId, invite.workspaceId),
       ),
     });
 

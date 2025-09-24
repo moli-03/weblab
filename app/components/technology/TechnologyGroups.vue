@@ -25,7 +25,7 @@
 
   // Use technologies directly from props for display, but maintain deletingIds for optimistic updates
   const displayTechnologies = computed(() => props.technologies);
-  
+
   const getTechniquesForCategory = (category: Technology["category"]) => {
     return displayTechnologies.value.filter(tech => tech.category === category);
   };
@@ -84,7 +84,7 @@
   async function handleDelete(tech: Technology) {
     if (deletingIds.value.has(tech.id)) return;
     deletingIds.value.add(tech.id);
-    
+
     try {
       await $authFetch(`/api/workspaces/${tech.workspaceId}/technologies/${tech.id}`, { method: "DELETE" });
       toast.add({
@@ -142,11 +142,11 @@
       </div>
       <div v-else class="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 py-2">
         <div v-for="tech in item.techniques" :key="`${tech.id}-${tech.updatedAt}`" class="h-fit">
-          <TechnologyCard 
-            :technology="tech" 
-            :editable="editable" 
-            @delete="handleDelete(tech)" 
-            @edit="handleEdit(tech)" 
+          <TechnologyCard
+            :technology="tech"
+            :editable="editable"
+            @delete="handleDelete(tech)"
+            @edit="handleEdit(tech)"
           />
         </div>
       </div>

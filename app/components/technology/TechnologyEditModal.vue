@@ -155,11 +155,7 @@
 <template>
   <UModal :open="open" :ui="{ footer: 'justify-end' }">
     <template #header>
-      <ModalHeader
-        title="Edit technology"
-        subtitle="Update the technology details"
-        icon="material-symbols:edit"
-      />
+      <ModalHeader title="Edit technology" subtitle="Update the technology details" icon="material-symbols:edit" />
     </template>
 
     <template #body>

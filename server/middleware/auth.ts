@@ -85,13 +85,12 @@ export const requireAdmin = (event: H3Event, workspaceId: string): Promise<AuthC
 export const requireAdminOrCTO = async (event: H3Event, workspaceId: string): Promise<AuthContext> => {
   const authContext = requireAuth(event);
 
-  const isAdminOrCTO = await hasRoleForRequest(authContext, workspaceId, "admin")
-    .then(isAdmin => {
-      if (!isAdmin) {
-        return hasRoleForRequest(authContext, workspaceId, "cto");
-      }
-      return true;
-    });
+  const isAdminOrCTO = await hasRoleForRequest(authContext, workspaceId, "admin").then(isAdmin => {
+    if (!isAdmin) {
+      return hasRoleForRequest(authContext, workspaceId, "cto");
+    }
+    return true;
+  });
 
   if (!isAdminOrCTO) {
     throw createError({
