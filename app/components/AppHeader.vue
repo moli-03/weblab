@@ -20,9 +20,7 @@
             <p class="text-xs sm:text-sm md:text-base text-zinc-400 font-medium hidden sm:block">
               Enterprise Technology Assessment Platform
             </p>
-            <p class="text-xs text-zinc-400 font-medium sm:hidden">
-              Tech Assessment
-            </p>
+            <p class="text-xs text-zinc-400 font-medium sm:hidden">Tech Assessment</p>
           </div>
         </div>
 
@@ -33,21 +31,8 @@
 
         <!-- Auth buttons for non-logged-in users -->
         <div v-if="!isLoggedIn" class="flex flex-col md:flex-row items-center gap-1 sm:gap-2 flex-shrink-0">
-          <UButton 
-            variant="ghost" 
-            size="lg"
-            icon="material-symbols:person-add" 
-            to="/auth/register"
-          >
-            Sign up
-          </UButton>
-          <UButton 
-            size="lg"
-            icon="material-symbols:login" 
-            to="/auth/login"
-          >
-            Sign in
-          </UButton>
+          <UButton variant="ghost" size="lg" icon="material-symbols:person-add" to="/auth/register"> Sign up </UButton>
+          <UButton size="lg" icon="material-symbols:login" to="/auth/login"> Sign in </UButton>
         </div>
 
         <!-- User info for logged-in users -->
