@@ -85,10 +85,15 @@ export const requireAdmin = (event: H3Event, workspaceId: string): Promise<AuthC
 export const requireAdminOrCTO = async (event: H3Event, workspaceId: string): Promise<AuthContext> => {
   const authContext = requireAuth(event);
 
-  const hasAdminRole = await hasRoleForRequest(authContext, workspaceId, "admin");
-  const hasCTORole = await hasRoleForRequest(authContext, workspaceId, "cto");
+  const isAdminOrCTO = await hasRoleForRequest(authContext, workspaceId, "admin")
+    .then(isAdmin => {
+      if (!isAdmin) {
+        return hasRoleForRequest(authContext, workspaceId, "cto");
+      }
+      return true;
+    });
 
-  if (!hasAdminRole && !hasCTORole) {
+  if (!isAdminOrCTO) {
     throw createError({
       statusCode: 403,
       statusMessage: "Forbidden",

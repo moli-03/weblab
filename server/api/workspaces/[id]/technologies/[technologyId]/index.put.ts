@@ -5,8 +5,8 @@ import { requireAdminOrCTO } from "~~/server/middleware/auth";
 import { eq, and } from "drizzle-orm";
 
 const paramsSchema = z.object({
-  id: z.string().uuid(),
-  technologyId: z.string().uuid(),
+  id: z.uuid(),
+  technologyId: z.uuid(),
 });
 
 const bodySchema = z
@@ -16,7 +16,7 @@ const bodySchema = z
     category: z.enum(["framework", "tool", "technique", "platform"]),
     ring: z.enum(["adopt", "trial", "assess", "hold"]).optional(),
     ringDescription: z.string().optional(),
-    logoUrl: z.union([z.string().url(), z.literal("")]).optional(),
+    logoUrl: z.union([z.url(), z.literal("")]).optional(),
     publish: z.boolean(),
   })
   .refine(

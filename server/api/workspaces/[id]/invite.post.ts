@@ -5,11 +5,11 @@ import { requireAdminOrCTO } from "~~/server/middleware/auth";
 import { randomBytes } from "crypto";
 
 const paramsSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
 });
 
 const bodySchema = z.object({
-  email: z.string().email().optional(), // Optional: for targeted invites
+  email: z.email().optional(), // Optional: for targeted invites
 });
 
 export default defineEventHandler(async event => {

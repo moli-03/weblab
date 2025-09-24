@@ -33,7 +33,7 @@
   const generatedInvite = ref<InviteResponse | null>(null);
 
   const schema = z.object({
-    email: z.string().email().optional().or(z.literal("")),
+    email: z.email().optional().or(z.literal("")),
   });
 
   type Schema = z.infer<typeof schema>;

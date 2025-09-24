@@ -5,8 +5,8 @@ import { requireAdminOrCTO } from "~~/server/middleware/auth";
 import { and, eq } from "drizzle-orm";
 
 const paramsSchema = z.object({
-  id: z.string().uuid(),
-  technologyId: z.string().uuid(),
+  id: z.uuid(),
+  technologyId: z.uuid(),
 });
 
 export default defineEventHandler(async event => {
