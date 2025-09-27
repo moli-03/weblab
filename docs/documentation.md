@@ -118,6 +118,7 @@ Nuxt 4 ist ein Fullstack Framework und erlaubt es somit, Frontend und Backend im
 | **Authentifizierung** | JWT + bcrypt | Stateless Authentication, sichere Password-Hashing |
 | **Visualisierung** | D3.js | Mächtige, flexible Datenvisualisierung für interaktive Charts |
 | **Testing** | Vitest + Playwright | Moderne, schnelle Test-Runner für Unit- und E2E-Tests |
+| **Deployment** | Docker | Einfache Möglichkeit die Applikation zu verbreiten |
 
 ## Architektur-Ansatz
 
@@ -209,6 +210,9 @@ Drizzle ist ein mir noch unbekanntes, aber sehr interessantes ORM, welches sich 
 
 ### D3.js für Radar-Visualisierung
 D3.js bietet eine sehr flexible Möglichkeit, mittels SVGs Diagramme zu zeichnen. Es hat builtin-Funktionalitäten für Interaktionen wie "click" oder "hover" und eine gute Dokumentation.
+
+### Docker für Deployment / Dev
+Docker wurde zum einen für die Entwicklung benutzt, um eine PostgresSQL Datenbank zu erstellen. Für den Deploy/die Abgabe wurde docker für den Build && Deploy der gesamten Applikation genutzt. Dies erleichterte die Entwicklung und das Deployment, da man so eine einheitliche Umgebung hat.
 
 ## Qualitätsanforderungen
 
