@@ -9,3 +9,43 @@ Dies ist das Projekt für das Modul WEBLAB im HS25. Ziel ist es, einen Technolog
 - **Datenbank**: PostgreSQL
 - **Auth**: JWT
 - **Testing**: Vitest + Playwright
+
+## Setup
+
+Das Projekt kann entweder manuell aufgesetzt/genutzt werden für DEV oder mittels Docker / Docker-Compose gebaut und als "prod"-Version genutzt werden.
+
+### 1. Dev
+
+Für das DEV-Setup muss folgendes gemacht werden:
+```bash
+# Dependencies herunterladen
+npm i
+
+# DB-Starten
+docker compose -f stack.local.yml -d
+
+# .env anpassen
+cp .env.example .env
+vim .env # Gewünschte config (defaults funktionieren für DEV)
+
+# DB-Migrieren / Schema erstellen
+npm run db:migrate
+
+# (Optional) Dummy Daten einfügen
+npm run db:seed
+
+# Applikation starten
+npx nuxi dev
+```
+
+### 2. Prod
+
+Die Applikation kann auch via docker-compose gebaut und genutzt werden.
+
+```bash
+docker compose -f stack.deploy.yml -d
+```
+
+Hier können auch andere ENV-Variablen mitgegeben werden.
+
+Falls ein DB-Seed ausgeführt werden soll, muss der `seed`-Service im `stack.deploy.yml` aktiviert werden.
