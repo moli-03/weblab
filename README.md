@@ -45,7 +45,7 @@ Die Applikation ist dann unter `http://localhost:3000` erreichbar.
 Die Applikation kann auch via docker-compose gebaut und genutzt werden.
 
 ```bash
-docker compose -f stack.deploy.yml -d
+docker compose -f stack.deploy.yml up -d
 ```
 
 Die Applikation ist dann unter `http://localhost:3000` erreichbar.
