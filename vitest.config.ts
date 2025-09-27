@@ -11,20 +11,12 @@ export default defineConfig({
           environment: "node",
         },
       },
-      {
-        test: {
-          name: "integration",
-          include: ["tests/integration/*.{test,spec}.ts"],
-          environment: "node",
-          testTimeout: 30000, // Integration tests may take longer
-          setupFiles: ["tests/integration/setup.ts"],
-        },
-      },
       await defineVitestProject({
         test: {
           name: "nuxt",
-          include: ["tests/nuxt/*.{test,spec}.ts"],
+          include: ["tests/nuxt/**/*.{test,spec}.ts"],
           environment: "nuxt",
+          maxConcurrency: 1
         },
       }),
     ],
