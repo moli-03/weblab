@@ -18,13 +18,11 @@ interface LoginResponse {
 }
 
 describe("POST /api/auth/login", async () => {
-
   await setupNuxt();
 
   beforeAll(async () => {
-
     await clearDB();
-      
+
     // Register a test user for login tests
     await $fetch("/api/auth/register", {
       method: "POST",

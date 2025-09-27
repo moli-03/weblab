@@ -31,9 +31,8 @@ describe("GET /api/auth/me", async () => {
   await setupNuxt();
 
   beforeAll(async () => {
-
     await clearDB();
-      
+
     // Register and login to get access token
     await $fetch("/api/auth/register", {
       method: "POST",

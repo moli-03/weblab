@@ -4,14 +4,14 @@ export const setupNuxt = (options?: Partial<TestOptions>) => {
   return setup({
     server: true,
     build: false,
-    buildDir: '.output',
+    buildDir: ".output",
     nuxtConfig: {
       nitro: {
         output: {
-          dir: '.output'
-        }
-      }
+          dir: ".output",
+        },
+      },
     },
-    ...options
+    ...options,
   });
-}
+};

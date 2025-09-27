@@ -7,7 +7,7 @@ const envSchema = z.object({
   JWT_REFRESH_SECRET: z.string().nonempty(),
 });
 
-dotenv.config({ path: '.env' });
+dotenv.config({ path: ".env" });
 
 export type EnvSchema = z.infer<typeof envSchema>;
 export const env = envSchema.parse(process.env);

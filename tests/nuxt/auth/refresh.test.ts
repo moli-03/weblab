@@ -26,7 +26,7 @@ describe("POST /api/auth/refresh", async () => {
   let refreshToken: string;
   // eslint-disable-next-line
   let accessToken: string;
-    
+
   const refreshTestUser = {
     name: "Refresh Test User",
     email: "refreshtest@example.com",
@@ -36,9 +36,8 @@ describe("POST /api/auth/refresh", async () => {
   await setupNuxt();
 
   beforeAll(async () => {
-
     await clearDB();
-      
+
     // Register and login to get tokens
     await $fetch("/api/auth/register", {
       method: "POST",

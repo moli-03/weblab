@@ -16,7 +16,7 @@ export default defineConfig({
           name: "nuxt",
           include: ["tests/nuxt/**/*.{test,spec}.ts"],
           environment: "nuxt",
-          maxConcurrency: 1
+          maxConcurrency: 1,
         },
       }),
     ],

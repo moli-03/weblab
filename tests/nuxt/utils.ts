@@ -1,6 +1,12 @@
-import { db } from "../../server/database"
-import { loginAudit, technologies, users, workspaceInvites, workspaceMembers, workspaces } from "../../server/database/schema"
-
+import { db } from "../../server/database";
+import {
+  loginAudit,
+  technologies,
+  users,
+  workspaceInvites,
+  workspaceMembers,
+  workspaces,
+} from "../../server/database/schema";
 
 export const clearDB = async () => {
   await db.delete(loginAudit);

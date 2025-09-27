@@ -1,4 +1,3 @@
-
 import { describe, it, expect, beforeAll } from "vitest";
 import { $fetch } from "@nuxt/test-utils/e2e";
 import type { PublicUser } from "../../../server/utils/response-sanitizer";
@@ -6,7 +5,6 @@ import { setupNuxt } from "../setup-nuxt";
 import { clearDB } from "../utils";
 
 describe("POST /api/auth/register", async () => {
-
   const testUser = {
     name: "Test User",
     email: "test@example.com",
@@ -28,7 +26,7 @@ describe("POST /api/auth/register", async () => {
   it("should register a new user successfully", async () => {
     const response = await $fetch<{ user: PublicUser }>("/api/auth/register", {
       method: "POST",
-      body: testUser
+      body: testUser,
     });
 
     expect(response).toHaveProperty("user");
@@ -80,10 +78,10 @@ describe("POST /api/auth/register", async () => {
 
   it("should reject registration with duplicate email", async () => {
     // First registration should succeed
-    await $fetch("/api/auth/register", {
+    (await $fetch("/api/auth/register", {
       method: "POST",
       body: testUser2,
-    }) as { user: PublicUser };
+    })) as { user: PublicUser };
 
     // Second registration with same email should fail
     await expect(
