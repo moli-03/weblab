@@ -45,11 +45,11 @@ Die Applikation ist dann unter `http://localhost:3000` erreichbar.
 Die Applikation kann auch via docker-compose gebaut und genutzt werden.
 
 ```bash
-docker compose -f stack.deploy.yml up -d
+docker compose -f stack.deploy.yml up
 ```
 
 Die Applikation ist dann unter `http://localhost:3000` erreichbar.
 
-Hier können auch andere ENV-Variablen mitgegeben werden.
+Es können auch andere ENV-Variablen mitgegeben werden als die standardmässig konfigurierten.
 
 Falls ein DB-Seed ausgeführt werden soll, muss der `seed`-Service im `stack.deploy.yml` aktiviert werden.
