@@ -3,11 +3,11 @@ services:
     image: postgres:17
     restart: unless-stopped
     environment:
-      POSTGRES_USER: dev
-      POSTGRES_PASSWORD: dev123
-      POSTGRES_DB: weblab
+      POSTGRES_USER: ${DB_USERNAME:-admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-admin}
+      POSTGRES_DB: ${DB_NAME:-weblab}
     ports:
-      - "5432:5432"
+      - "${DB_PORT:-5432}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:

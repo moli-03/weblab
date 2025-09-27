@@ -12,7 +12,7 @@ Dies ist das Projekt für das Modul WEBLAB im HS25. Ziel ist es, einen Technolog
 
 ## Setup
 
-Das Projekt kann entweder manuell aufgesetzt/genutzt werden für DEV oder mittels Docker / Docker-Compose gebaut und als "prod"-Version genutzt werden.
+Das Projekt kann entweder manuell aufgesetzt/genutzt werden für DEV oder mittels Docker / Docker-Compose gebaut und als "PROD"-Version genutzt werden.
 
 ### 1. Dev
 
@@ -21,12 +21,12 @@ Für das DEV-Setup muss folgendes gemacht werden:
 # Dependencies herunterladen
 npm i
 
-# DB-Starten
-docker compose -f stack.local.yml -d
-
 # .env anpassen
 cp .env.example .env
 vim .env # Gewünschte config (defaults funktionieren für DEV)
+
+# DB-Starten
+docker compose -f stack.local.yml -d
 
 # DB-Migrieren / Schema erstellen
 npm run db:migrate
@@ -38,6 +38,8 @@ npm run db:seed
 npx nuxi dev
 ```
 
+Die Applikation ist dann unter `http://localhost:3000` erreichbar.
+
 ### 2. Prod
 
 Die Applikation kann auch via docker-compose gebaut und genutzt werden.
@@ -45,6 +47,8 @@ Die Applikation kann auch via docker-compose gebaut und genutzt werden.
 ```bash
 docker compose -f stack.deploy.yml -d
 ```
+
+Die Applikation ist dann unter `http://localhost:3000` erreichbar.
 
 Hier können auch andere ENV-Variablen mitgegeben werden.
 
