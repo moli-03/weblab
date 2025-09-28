@@ -1,7 +1,7 @@
 CREATE TYPE "public"."technology_category" AS ENUM('technique', 'tool', 'platform', 'framework');--> statement-breakpoint
 CREATE TYPE "public"."technology_ring" AS ENUM('adopt', 'trial', 'assess', 'hold');--> statement-breakpoint
 CREATE TYPE "public"."technology_status" AS ENUM('draft', 'published');--> statement-breakpoint
-CREATE TYPE "public"."user_role" AS ENUM('admin', 'cto', 'customer');--> statement-breakpoint
+CREATE TYPE "public"."user_role" AS ENUM('cto', 'tech-lead', 'customer');--> statement-breakpoint
 CREATE TABLE "login_audit" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" uuid,

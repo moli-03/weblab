@@ -53,11 +53,11 @@ export default defineEventHandler(async event => {
       })
       .returning();
 
-    // Add the creator as an admin member of the workspace
+    // Add the creator as a CTO member of the workspace
     await db.insert(workspaceMembers).values({
       userId: user.user.id,
       workspaceId: newWorkspace.id,
-      role: "admin",
+      role: "cto",
     });
 
     return newWorkspace;

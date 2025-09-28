@@ -1,7 +1,7 @@
 <script lang="ts" setup>
   const { setActiveRoute } = useNavigation();
 
-  setActiveRoute("discover");
+  setActiveRoute("discover-workspaces");
 
   const {
     data: workspaces,

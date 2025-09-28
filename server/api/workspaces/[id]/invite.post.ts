@@ -1,7 +1,7 @@
 import z from "zod";
 import { db } from "~~/server/database";
 import { workspaceInvites } from "~~/server/database/schema";
-import { requireAdminOrCTO } from "~~/server/middleware/auth";
+import { requireCTOOrTechLead } from "~~/server/middleware/auth";
 import { randomBytes } from "crypto";
 
 const paramsSchema = z.object({
@@ -17,8 +17,8 @@ export default defineEventHandler(async event => {
     const params = getRouterParams(event);
     const { id: workspaceId } = paramsSchema.parse(params);
 
-    // Ensure user has admin or CTO role
-    const authContext = await requireAdminOrCTO(event, workspaceId);
+    // Ensure user has CTO or Tech-Lead role
+    const authContext = await requireCTOOrTechLead(event, workspaceId);
 
     // Parse request body
     const body = await readBody(event);

@@ -17,7 +17,7 @@
   const { $authFetch } = useNuxtApp();
   const toast = useToast();
 
-  const selectedRole = ref<"admin" | "cto" | "customer">(props.member.role);
+  const selectedRole = ref<"cto" | "tech-lead" | "customer">(props.member.role);
   const isLoading = ref(false);
 
   const roleOptions = [
@@ -28,14 +28,14 @@
       color: "neutral" as const,
     },
     {
-      value: "cto" as const,
-      label: "CTO",
+      value: "tech-lead" as const,
+      label: "Tech Lead",
       description: "Can manage technologies and view workspace content",
       color: "warning" as const,
     },
     {
-      value: "admin" as const,
-      label: "Admin",
+      value: "cto" as const,
+      label: "CTO",
       description: "Full access to manage workspace, members, and technologies",
       color: "primary" as const,
     },
@@ -168,13 +168,13 @@
 
         <!-- Warning for role changes -->
         <div
-          v-if="hasChanges && selectedRole === 'admin'"
+          v-if="hasChanges && selectedRole === 'cto'"
           class="rounded-lg bg-warning-500/10 border border-warning-500/20 p-3"
         >
           <div class="flex gap-2">
             <UIcon name="material-symbols:warning" class="text-warning-500 text-sm mt-0.5 flex-shrink-0" />
             <div class="text-xs">
-              <p class="font-medium text-warning-400">Granting Admin Access</p>
+              <p class="font-medium text-warning-400">Granting CTO Access</p>
               <p class="text-warning-500/80 mt-1">
                 This user will have full access to manage the workspace, including adding/removing members and changing
                 roles.

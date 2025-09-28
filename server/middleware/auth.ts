@@ -78,25 +78,25 @@ export const requireRole = async (
   return authContext;
 };
 
-export const requireAdmin = (event: H3Event, workspaceId: string): Promise<AuthContext> => {
-  return requireRole(event, workspaceId, "admin");
+export const requireCTO = (event: H3Event, workspaceId: string): Promise<AuthContext> => {
+  return requireRole(event, workspaceId, "cto");
 };
 
-export const requireAdminOrCTO = async (event: H3Event, workspaceId: string): Promise<AuthContext> => {
+export const requireCTOOrTechLead = async (event: H3Event, workspaceId: string): Promise<AuthContext> => {
   const authContext = requireAuth(event);
 
-  const isAdminOrCTO = await hasRoleForRequest(authContext, workspaceId, "admin").then(isAdmin => {
-    if (!isAdmin) {
-      return hasRoleForRequest(authContext, workspaceId, "cto");
+  const isCTOOrTechLead = await hasRoleForRequest(authContext, workspaceId, "cto").then(isCTO => {
+    if (!isCTO) {
+      return hasRoleForRequest(authContext, workspaceId, "tech-lead");
     }
     return true;
   });
 
-  if (!isAdminOrCTO) {
+  if (!isCTOOrTechLead) {
     throw createError({
       statusCode: 403,
       statusMessage: "Forbidden",
-      message: `Required role: admin or cto in workspace: ${workspaceId}`,
+      message: `Required role: cto or tech-lead in workspace: ${workspaceId}`,
     });
   }
 

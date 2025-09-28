@@ -1,6 +1,6 @@
 <script lang="ts" setup>
   const { setActiveRoute } = useNavigation();
-  setActiveRoute("home");
+  setActiveRoute("your-workspaces");
 
   const {
     data: workspaces,

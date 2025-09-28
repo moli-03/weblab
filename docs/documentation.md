@@ -175,7 +175,7 @@ Die Anwendung ist für lokale Entwicklung mit Docker Compose & den Deploy via Do
 - Login-Audit-Protokollierung für Sicherheitsmonitoring
 
 **Autorisierung:**
-- Role-based Access Control (Admin, CTO, Customer)
+- Role-based Access Control (CTO, Tech-Lead, Customer)
 - Workspace-basierte Berechtigung (Owner, Member)
 - Resource-level Authorization für API-Endpoints
 

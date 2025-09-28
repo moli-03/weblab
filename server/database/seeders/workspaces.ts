@@ -35,13 +35,13 @@ export default async function execute(db: DB, seedGen: number) {
     },
   }));
 
-  // Assign the owners as admin to the workspaces
+  // Assign the owners as CTO to the workspaces
   const allWorkspaces = await db.query.workspaces.findMany();
   await db.insert(workspaceMembers).values(
     allWorkspaces.map<NewWorkspaceMember>(workspace => ({
       userId: allUsers.find(user => user.id == workspace.ownerId)!.id!,
       workspaceId: workspace.id,
-      role: "admin",
+      role: "cto",
     })),
   );
 }

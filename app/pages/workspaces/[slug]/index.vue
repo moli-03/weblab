@@ -102,16 +102,16 @@
     { immediate: false, watch: [workspace] },
   );
 
-  // SEO Title
+  // Custom page title
   const pageTitle = computed(() => (workspace.value ? `${workspace.value.name} – Workspace` : "Workspace"));
   useHead(() => ({ title: pageTitle.value }));
 
   // Derived state
   const isOwner = computed(() => (workspace.value && user.value?.id === workspace.value.ownerId) || false);
   const canEditTechnologies = computed(
-    () => !!(workspace.value && (workspace.value.memberRole === "admin" || workspace.value.memberRole === "cto")),
+    () => !!(workspace.value && (workspace.value.memberRole === "tech-lead" || workspace.value.memberRole === "cto")),
   );
-  const canManageMembers = computed(() => !!(workspace.value && workspace.value.memberRole === "admin"));
+  const canManageMembers = computed(() => !!(workspace.value && workspace.value.memberRole === "cto"));
 
   // Breadcrumbs for UBreadcrumb (Nuxt UI expects label + optional to)
   const breadcrumbs = computed<BreadcrumbItem[]>(() => [

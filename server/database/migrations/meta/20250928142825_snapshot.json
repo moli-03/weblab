@@ -1,5 +1,5 @@
 {
-  "id": "8d77e260-8ed3-4597-a5e8-2d4f1fd2eb0c",
+  "id": "e964c5b6-68f6-4ec9-ba5b-120f6841af1c",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -676,8 +676,8 @@
       "name": "user_role",
       "schema": "public",
       "values": [
-        "admin",
         "cto",
+        "tech-lead",
         "customer"
       ]
     }

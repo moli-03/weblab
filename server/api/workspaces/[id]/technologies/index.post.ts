@@ -1,7 +1,7 @@
 import z from "zod";
 import { db } from "~~/server/database";
 import { technologies } from "~~/server/database/schema";
-import { requireAdminOrCTO } from "~~/server/middleware/auth";
+import { requireCTOOrTechLead } from "~~/server/middleware/auth";
 
 const paramsSchema = z.object({
   id: z.uuid(),
@@ -35,7 +35,7 @@ export default defineEventHandler(async event => {
     const params = getRouterParams(event);
     const { id: workspaceId } = paramsSchema.parse(params);
 
-    await requireAdminOrCTO(event, workspaceId);
+    await requireCTOOrTechLead(event, workspaceId);
 
     const workspace = await db.query.workspaces.findFirst({
       where: (table, { eq }) => eq(table.id, workspaceId),

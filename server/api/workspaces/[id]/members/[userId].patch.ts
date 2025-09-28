@@ -1,7 +1,7 @@
 import z from "zod";
 import { db } from "~~/server/database";
 import { workspaceMembers } from "~~/server/database/schema";
-import { requireAdmin } from "~~/server/middleware/auth";
+import { requireCTO } from "~~/server/middleware/auth";
 import { eq, and } from "drizzle-orm";
 
 const paramsSchema = z.object({
@@ -10,7 +10,7 @@ const paramsSchema = z.object({
 });
 
 const bodySchema = z.object({
-  role: z.enum(["admin", "cto", "customer"]),
+  role: z.enum(["cto", "tech-lead", "customer"]),
 });
 
 export default defineEventHandler(async event => {
@@ -18,10 +18,10 @@ export default defineEventHandler(async event => {
     const params = getRouterParams(event);
     const { id: workspaceId, userId } = paramsSchema.parse(params);
 
-    // Ensure user has admin role (only admins can change roles)
-    const authContext = await requireAdmin(event, workspaceId);
+    // Ensure user has CTO role (only CTOs can change roles)
+    const authContext = await requireCTO(event, workspaceId);
 
-    // Prevent admin from changing their own role
+    // Prevent CTO from changing their own role
     if (authContext.user.id === userId) {
       throw createError({
         statusCode: 400,

@@ -21,9 +21,9 @@
 
   const roleColor = computed(() => {
     switch (props.member.role) {
-      case "admin":
-        return "primary";
       case "cto":
+        return "primary";
+      case "tech-lead":
         return "warning";
       default:
         return "neutral";

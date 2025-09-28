@@ -17,7 +17,7 @@ import {
 export const technologyCategory = pgEnum("technology_category", ["technique", "tool", "platform", "framework"]);
 export const technologyRing = pgEnum("technology_ring", ["adopt", "trial", "assess", "hold"]);
 export const technologyStatus = pgEnum("technology_status", ["draft", "published"]);
-export const userRole = pgEnum("user_role", ["admin", "cto", "customer"]);
+export const userRole = pgEnum("user_role", ["cto", "tech-lead", "customer"]);
 
 export const users = pgTable(
   "users",

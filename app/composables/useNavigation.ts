@@ -1,22 +1,22 @@
 import type { NavigationMenuItem } from "@nuxt/ui";
 
-type Route = "home" | "discover";
+type Route = "your-workspaces" | "discover-workspaces";
 
 export const useNavigation = () => {
-  const activeRoute = useState<Route>("activeRoute", () => "home");
+  const activeRoute = useState<Route>("activeRoute", () => "your-workspaces");
 
   const navigation = computed<NavigationMenuItem[]>(() => [
     {
-      label: "Home",
+      label: "Your Workspaces",
       icon: "material-symbols:home-outline",
       to: "/workspaces",
-      active: activeRoute.value === "home",
+      active: activeRoute.value === "your-workspaces",
     },
     {
-      label: "Discover",
+      label: "Discover Workspaces",
       icon: "material-symbols:explore-outline",
       to: "/workspaces/discover",
-      active: activeRoute.value === "discover",
+      active: activeRoute.value === "discover-workspaces",
     },
   ]);
 

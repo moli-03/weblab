@@ -1,7 +1,7 @@
 import z from "zod";
 import { db } from "~~/server/database";
 import { technologies } from "~~/server/database/schema";
-import { requireAdminOrCTO } from "~~/server/middleware/auth";
+import { requireCTOOrTechLead } from "~~/server/middleware/auth";
 import { and, eq } from "drizzle-orm";
 
 const paramsSchema = z.object({
@@ -14,8 +14,8 @@ export default defineEventHandler(async event => {
     const params = getRouterParams(event);
     const { id: workspaceId, technologyId } = paramsSchema.parse(params);
 
-    // Ensure user has admin or CTO role
-    await requireAdminOrCTO(event, workspaceId);
+    // Ensure user has CTO or Tech-Lead role
+    await requireCTOOrTechLead(event, workspaceId);
 
     // Check existence and ownership
     const existing = await db.query.technologies.findFirst({
