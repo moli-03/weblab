@@ -26,7 +26,8 @@
 |              | Dokumentation                                                             | 3h      |
 |              | Setup mit Docker-Compose für Abgabe + Fixes                               | 2h      |
 | **28.09.25** | Renaming von Rollen (Admin -> CTO, CTO -> Tech-Lead)                      | 1h      |
+|              | Dokumentation                                                             | 2h      |
 
 ---
 
-✅ **Gesamtzeit: 49 Stunden**
+✅ **Gesamtzeit: 51 Stunden**

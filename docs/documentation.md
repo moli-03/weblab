@@ -134,14 +134,158 @@ Nuxt 4 ist ein Fullstack Framework und erlaubt es somit, Frontend und Backend im
 
 ### Ebene 1 - System Kontext Diagram (C1)
 
+```mermaid
+C4Context
+  title Technology Radar - System Context
+
+  Person(cto, "CTO", "Verwaltet Workspaces und Technologien")
+  Person(techlead, "Tech-Lead", "Verwaltet Technologien")
+  Person(customer, "Customer", "Nutzt Technologie-Radar")
+
+  System(techradar, "Technology Radar", "Web-basiertes Technologie-Management")
+
+  Rel(cto, techradar, "Verwaltet", "HTTPS")
+  Rel(techlead, techradar, "Bearbeitet Technologien", "HTTPS")
+  Rel(customer, techradar, "Betrachtet Radar", "HTTPS")
+
+  UpdateLayoutConfig($c4ShapeInRow="2")
+```
+
 ### Ebene 2 - Container Diagram (C2)
 
-### Ebene 3 - Frontend (C3)
+```mermaid
+C4Container
+  title Technology Radar - Container Diagram
 
-### Ebene 3 - API Server (C3)
+  Person(user, "Benutzer", "CTO/Tech-Lead/Customer")
+
+  System_Boundary(radar, "Technology Radar System") {
+    Container(spa, "Single Page App", "Vue.js/Nuxt", "Benutzeroberfläche mit D3.js Radar")
+    Container(api, "API Server", "Nitro/Node.js", "REST API mit JWT Auth")
+    ContainerDb(db, "PostgreSQL", "Database", "Benutzer, Workspaces, Technologien")
+  }
+
+  Rel(user, spa, "Nutzt", "HTTPS")
+  Rel(spa, api, "API Calls", "HTTP/REST")
+  Rel(api, db, "Liest/Schreibt", "SQL/TCP:5432")
+```
+
+### Ebene 3 - Frontend Components (C3)
+
+```mermaid
+C4Component
+  title Technology Radar - Frontend Components
+
+  Container_Boundary(spa, "Single Page Application") {
+    Component(pages, "Pages", "Vue/Nuxt", "Routing & Layout")
+    Component(radar, "Technology Radar", "D3.js/SVG", "Interaktive Visualisierung")
+    Component(workspace, "Workspace Management", "Vue Components", "CRUD Workspaces")
+    Component(technology, "Technology Management", "Vue Components", "CRUD Technologien")
+    Component(auth, "Authentication", "Composables", "JWT Login/Register")
+    Component(ui, "UI Components", "Nuxt UI", "Wiederverwendbare Komponenten")
+  }
+
+  Container(api, "API Server", "Nitro")
+
+  Rel(pages, workspace, "verwendet")
+  Rel(pages, technology, "verwendet")
+  Rel(pages, radar, "zeigt")
+  Rel(radar, technology, "visualisiert")
+  Rel(auth, api, "authentifiziert", "JWT")
+  Rel(workspace, api, "CRUD", "REST")
+  Rel(technology, api, "CRUD", "REST")
+```
+
+### Ebene 3 - API Server Components (C3)
+
+```mermaid
+C4Component
+  title Technology Radar - API Server Components
+
+  Container_Boundary(api, "API Server") {
+    Component(routes, "API Routes", "Nitro", "REST Endpoints")
+    Component(auth_mw, "Auth Middleware", "JWT", "Authentifizierung & Autorisierung")
+    Component(validation, "Validation", "Zod", "Input/Output Validierung")
+    Component(services, "Business Logic", "TypeScript", "Geschäftslogik")
+    Component(orm, "Database Layer", "Drizzle ORM", "Typsichere DB-Zugriffe")
+  }
+
+  ContainerDb(db, "PostgreSQL", "Database")
+
+  Rel(routes, auth_mw, "prüft")
+  Rel(routes, validation, "validiert")
+  Rel(routes, services, "delegiert")
+  Rel(services, orm, "nutzt")
+  Rel(orm, db, "SQL", "TCP:5432")
+```
 
 ## Laufzeitsicht
-Maybe some seq-diagrams?
+
+### Benutzer-Authentifizierung
+
+```mermaid
+sequenceDiagram
+    participant User as Benutzer
+    participant SPA as Frontend (SPA)
+    participant API as API Server
+    participant DB as PostgreSQL
+    participant JWT as JWT Service
+
+    User->>SPA: Login (email, password)
+    SPA->>API: POST /api/auth/login
+    API->>DB: Query User by email
+    DB-->>API: User data
+    API->>API: Verify password (bcrypt)
+    API->>JWT: Generate tokens
+    JWT-->>API: Access & Refresh Token
+    API->>DB: Log login attempt
+    API-->>SPA: Tokens + User data
+    SPA->>SPA: Store tokens
+    SPA-->>User: Login erfolgreich
+```
+
+### Technologie-Management
+
+```mermaid
+sequenceDiagram
+    participant User as CTO/Tech-Lead
+    participant SPA as Frontend
+    participant API as API Server
+    participant Auth as Auth Middleware
+    participant DB as Database
+
+    User->>SPA: Technologie erstellen
+    SPA->>API: POST /api/workspaces/{id}/technologies
+    API->>Auth: Validate JWT & Permissions
+    Auth-->>API: User + Role validated
+    API->>API: Validate input (Zod)
+    API->>DB: INSERT Technology
+    DB-->>API: New Technology
+    API-->>SPA: Created Technology
+    SPA->>SPA: Update UI
+    SPA-->>User: Technologie erstellt
+```
+
+### Radar-Visualisierung
+
+```mermaid
+sequenceDiagram
+    participant User as Benutzer
+    participant SPA as Frontend
+    participant Radar as D3.js Radar
+    participant API as API Server
+    participant DB as Database
+
+    User->>SPA: Workspace öffnen
+    SPA->>API: GET /api/workspaces/{slug}
+    API->>DB: Query Workspace + Technologies
+    DB-->>API: Workspace mit Technologien
+    API-->>SPA: Workspace Data
+    SPA->>Radar: Render Radar mit Daten
+    Radar->>Radar: Calculate positions
+    Radar->>Radar: Draw SVG elements
+    Radar-->>User: Interaktiver Radar angezeigt
+```
 
 ## Verteilungssicht
 
@@ -199,6 +343,42 @@ const technologySchema = z.object({
   ring: z.enum(["adopt", "trial", "assess", "hold"]).optional(),
 });
 ```
+
+### Error Handling
+
+**API Error Handling:**
+- Konsistente HTTP-Statuscodes (400, 401, 403, 404, 500)
+- Strukturierte Error-Response mit `createError()` (Nitro)
+- Error-Logging auf Server-Ebene
+
+**Frontend Error Handling:**
+- Try-catch für API-Calls mit `useAsyncData`
+- Toast-Notifications für Benutzer-Feedback
+- Fallback-UI bei Fehlern
+
+### Logging & Monitoring
+
+**Login-Audit:**
+- Persistierung aller Login-Versuche in `login_audit` Tabelle
+- IP-Adresse und User-Agent Tracking
+- Success/Failure Status mit Failure-Reason
+
+**Entwicklungszeit:**
+- Console-Logging für Debugging
+- Error-Stack-Traces in Development-Mode
+
+### Datenpersistierung
+
+**Database Design:**
+- PostgreSQL
+- UUID Primary Keys 
+- Foreign Key Constraints für Datenintegrität
+- Check Constraints (z.B. published technologies benötigen ring)
+
+**Drizzle ORM:**
+- Type-safe SQL queries
+- Migration-System für Schema-Änderungen
+- Relationship-Definition für komplexe Queries
 
 ## Architekturentscheidungen
 
