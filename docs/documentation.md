@@ -266,27 +266,6 @@ sequenceDiagram
     SPA-->>User: Technologie erstellt
 ```
 
-### Radar-Visualisierung
-
-```mermaid
-sequenceDiagram
-    participant User as Benutzer
-    participant SPA as Frontend
-    participant Radar as D3.js Radar
-    participant API as API Server
-    participant DB as Database
-
-    User->>SPA: Workspace öffnen
-    SPA->>API: GET /api/workspaces/{slug}
-    API->>DB: Query Workspace + Technologies
-    DB-->>API: Workspace mit Technologien
-    API-->>SPA: Workspace Data
-    SPA->>Radar: Render Radar mit Daten
-    Radar->>Radar: Calculate positions
-    Radar->>Radar: Draw SVG elements
-    Radar-->>User: Interaktiver Radar angezeigt
-```
-
 ## Verteilungssicht
 
 ```mermaid
