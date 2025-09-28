@@ -25,7 +25,8 @@
 | **27.09.25** | API-Tests für Authentifikation                                            | 4h      |
 |              | Dokumentation                                                             | 3h      |
 |              | Setup mit Docker-Compose für Abgabe + Fixes                               | 2h      |
+| **28.09.25** | Renaming von Rollen (Admin -> CTO, CTO -> Tech-Lead)                      | 1h      |
 
 ---
 
-✅ **Gesamtzeit: 48 Stunden**
+✅ **Gesamtzeit: 49 Stunden**
