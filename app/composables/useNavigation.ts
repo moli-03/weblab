@@ -13,7 +13,7 @@ export const useNavigation = () => {
       active: activeRoute.value === "your-workspaces",
     },
     {
-      label: "Discover Workspaces",
+      label: "Discover",
       icon: "material-symbols:explore-outline",
       to: "/workspaces/discover",
       active: activeRoute.value === "discover-workspaces",

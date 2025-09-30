@@ -134,6 +134,11 @@
     // Refresh the members list when a role is changed
     refreshMembers();
   }
+
+  function onMemberRemoved() {
+    // Refresh the members list when a member is removed
+    refreshMembers();
+  }
 </script>
 
 <template>
@@ -271,7 +276,9 @@
                 :workspace-id="workspace.id"
                 :can-manage-members="canManageMembers"
                 :current-user-id="user?.id"
+                :workspace-owner-id="workspace.ownerId"
                 @role-changed="onMemberRoleChanged"
+                @member-removed="onMemberRemoved"
               />
             </ul>
           </section>

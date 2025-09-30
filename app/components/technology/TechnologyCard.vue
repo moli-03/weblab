@@ -74,7 +74,7 @@
       </div>
       <div class="min-w-0 flex-1">
         <div class="flex items-center gap-2 flex-wrap">
-          <h3 class="font-semibold leading-tight truncate" :title="technology.name">{{ technology.name }}</h3>
+          <h3 class="font-semibold leading-tight" :title="technology.name">{{ technology.name }}</h3>
           <UTooltip v-if="technology.ring" :text="technology.ringDescription || technology.ring">
             <UBadge
               :color="ringColor"

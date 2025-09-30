@@ -78,7 +78,7 @@
     <!-- Title / Meta -->
     <div class="flex-1 min-w-0">
       <div class="flex flex-wrap items-center gap-3">
-        <h1 class="font-semibold text-2xl leading-tight truncate">{{ workspace.name }}</h1>
+        <h1 class="font-semibold text-2xl leading-tight">{{ workspace.name }}</h1>
         <UBadge :color="workspace.isPublic ? 'primary' : 'neutral'" variant="subtle" size="sm">
           {{ workspace.isPublic ? "Public" : "Private" }}
         </UBadge>

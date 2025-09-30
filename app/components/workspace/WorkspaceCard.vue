@@ -87,12 +87,12 @@
         <!-- Title and stuff -->
         <div class="min-w-0 flex-1">
           <div class="flex items-center gap-2">
-            <h2 class="font-medium truncate text-base">{{ workspace.name }}</h2>
+            <h2 class="font-medium text-base">{{ workspace.name }}</h2>
             <UBadge :color="workspace.isPublic ? 'primary' : 'neutral'" size="sm" variant="subtle">
               {{ workspace.isPublic ? "Public" : "Private" }}
             </UBadge>
           </div>
-          <p class="text-xs text-muted truncate">Owned by {{ workspace.owner.name }}</p>
+          <p class="text-xs text-muted">Owned by {{ workspace.owner.name }}</p>
           <p class="text-sm text-gray-300 mt-2 line-clamp-2">
             {{ workspace.description }}
           </p>
