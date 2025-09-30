@@ -377,6 +377,69 @@ Docker wird sowohl in der Entwicklung als auch für das Deployment eingesetzt un
 - Build-Prozess über Docker für reproduzierbare Deployments
 - Plattformunabhängige Bereitstellung der Anwendung
 
+## API-Dokumentation
+
+Die REST-API bietet folgende Endpunkte für die Verwaltung von Authentifizierung, Workspaces, Mitgliedern und Technologien:
+
+### Authentifizierung
+
+| Method | Route | Berechtigung | Beschreibung |
+|--------|-------|--------------|---------------|
+| POST | `/api/auth/register` | Öffentlich | Benutzerregistrierung mit E-Mail, Passwort und Name |
+| POST | `/api/auth/login` | Öffentlich | Benutzeranmeldung, gibt JWT-Tokens zurück |
+| POST | `/api/auth/refresh` | Öffentlich | Erneuert Access-Token mit Refresh-Token |
+| GET | `/api/auth/me` | Authentifiziert | Gibt aktuelle Benutzerdaten zurück |
+
+### Workspaces
+
+| Method | Route | Berechtigung | Beschreibung |
+|--------|-------|--------------|---------------|
+| GET | `/api/workspaces` | Authentifiziert | Liste aller verfügbaren Workspaces |
+| POST | `/api/workspaces` | Authentifiziert | Erstellt neuen Workspace (Ersteller wird Owner) |
+| GET | `/api/workspaces/{id}` | Workspace-Mitglied | Details eines spezifischen Workspaces |
+| POST | `/api/workspaces/{id}/join` | Authentifiziert | Beitritt zu öffentlichem Workspace |
+| POST | `/api/workspaces/{id}/leave` | Workspace-Mitglied | Verlassen eines Workspaces (nicht für Owner) |
+| POST | `/api/workspaces/{id}/invite` | CTO | Erstellt Einladungstoken für Workspace |
+
+### Workspace-Mitglieder
+
+| Method | Route | Berechtigung | Beschreibung |
+|--------|-------|--------------|---------------|
+| GET | `/api/workspaces/{id}/members` | Workspace-Mitglied | Liste aller Mitglieder eines Workspaces |
+| PATCH | `/api/workspaces/{id}/members/{userId}` | CTO | Ändert Rolle eines Mitglieds (cto, tech-lead, customer) |
+| DELETE | `/api/workspaces/{id}/members/{userId}` | CTO | Entfernt Mitglied aus Workspace (nicht Owner oder sich selbst) |
+
+### Technologien
+
+| Method | Route | Berechtigung | Beschreibung |
+|--------|-------|--------------|---------------|
+| GET | `/api/workspaces/{id}/technologies` | Workspace-Mitglied | Liste aller Technologien eines Workspaces |
+| POST | `/api/workspaces/{id}/technologies` | CTO/Tech-Lead | Erstellt neue Technologie im Workspace |
+| PUT | `/api/workspaces/{id}/technologies/{technologyId}` | CTO/Tech-Lead | Aktualisiert bestehende Technologie |
+| DELETE | `/api/workspaces/{id}/technologies/{technologyId}` | CTO/Tech-Lead | Löscht Technologie aus Workspace |
+
+### Einladungen
+
+| Method | Route | Berechtigung | Beschreibung |
+|--------|-------|--------------|---------------|
+| GET | `/api/invite/{token}` | Öffentlich | Validiert Einladungstoken und gibt Workspace-Infos zurück |
+| POST | `/api/invite/{token}` | Authentifiziert | Nimmt Einladung an und fügt Benutzer zum Workspace hinzu |
+
+### Berechtigungsrollen
+
+| Rolle | Berechtigungen |
+|-------|----------------|
+| **CTO** | Vollzugriff auf Workspace: Mitglieder verwalten, Rollen ändern, Technologien verwalten, Einladungen erstellen |
+| **Tech-Lead** | Technologien erstellen, bearbeiten und löschen |
+| **Customer** | Nur lesender Zugriff auf Technologie-Radar |
+| **Owner** | Wie CTO, kann aber nicht aus eigenem Workspace entfernt werden |
+
+**Authentifizierung:**
+- JWT-basierte Authentifizierung über Authorization Header: `Bearer <token>`
+- Access-Token: 15 Minuten Gültigkeit
+- Refresh-Token: 7 Tage Gültigkeit
+- Automatische Token-Erneuerung im Frontend
+
 ## Qualitätsanforderungen
 
 Die Applikation sollte folgende Qualitätsanforderungen erreichen:
