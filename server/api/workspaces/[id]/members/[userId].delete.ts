@@ -42,7 +42,7 @@ export default defineEventHandler(async event => {
     if (workspace.ownerId === userId) {
       throw createError({
         statusCode: 400,
-        statusMessage: "Bad Request", 
+        statusMessage: "Bad Request",
         message: "Cannot remove the workspace owner",
       });
     }

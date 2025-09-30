@@ -39,13 +39,15 @@
   const joinedRelative = computed(() => moment(props.member.joinedAt).fromNow());
 
   // Can't change your own role
-  const canChangeRole = computed(() => props.canManageMembers && props.currentUserId !== props.member.id && props.workspaceOwnerId !== props.member.id);
+  const canChangeRole = computed(
+    () =>
+      props.canManageMembers && props.currentUserId !== props.member.id && props.workspaceOwnerId !== props.member.id,
+  );
 
   // Can delete if CTO and not the current user and not the workspace owner
-  const canDeleteMember = computed(() => 
-    props.canManageMembers && 
-    props.currentUserId !== props.member.id && 
-    props.workspaceOwnerId !== props.member.id
+  const canDeleteMember = computed(
+    () =>
+      props.canManageMembers && props.currentUserId !== props.member.id && props.workspaceOwnerId !== props.member.id,
   );
 
   const handleRoleChange = (updatedMember: WorkspaceMember & { role: string }) => {
@@ -57,10 +59,10 @@
     try {
       const { $authFetch } = useNuxtApp();
       await $authFetch(`/api/workspaces/${props.workspaceId}/members/${props.member.id}`, { method: "delete" });
-      
+
       emit("memberRemoved", props.member);
       showDeleteModal.value = false;
-      
+
       // Show success toast
       toast.add({
         title: "Member removed",
@@ -70,7 +72,7 @@
       });
     } catch (error: unknown) {
       console.error("Failed to remove member:", error);
-      
+
       // Show error toast
       toast.add({
         title: "Failed to remove member",
@@ -113,7 +115,7 @@
         icon="material-symbols:settings"
         @click="showRoleModal = true"
       />
-      
+
       <UButton
         v-if="canDeleteMember"
         variant="ghost"
@@ -130,15 +132,11 @@
         :workspace-id="workspaceId"
         @role-changed="handleRoleChange"
       />
-      
+
       <!-- Delete Confirmation Modal -->
       <UModal :open="showDeleteModal">
-
         <template #header>
-          <ModalHeader
-            title="Remove Member"
-            icon="material-symbols:warning"
-          />
+          <ModalHeader title="Remove Member" icon="material-symbols:warning" />
         </template>
 
         <template #body>
@@ -160,18 +158,13 @@
               icon="material-symbols:close"
               :disabled="isDeleting"
               @click="showDeleteModal = false"
-              >
-                Cancel
-              </UButton>
-              <UButton
-                color="error"
-                :loading="isDeleting"
-                icon="material-symbols:delete"
-                @click="handleDeleteMember"
-              >
-                Remove
-              </UButton>
-            </div>
+            >
+              Cancel
+            </UButton>
+            <UButton color="error" :loading="isDeleting" icon="material-symbols:delete" @click="handleDeleteMember">
+              Remove
+            </UButton>
+          </div>
         </template>
       </UModal>
     </div>

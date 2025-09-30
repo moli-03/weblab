@@ -48,7 +48,7 @@ export const loginUser = async (email: string, password: string): Promise<LoginR
 export const registerAndLoginUser = async (userData: TestUser): Promise<AuthenticatedUser> => {
   await registerUser(userData);
   const loginResponse = await loginUser(userData.email, userData.password);
-  
+
   return {
     user: loginResponse.user,
     accessToken: loginResponse.tokens.accessToken,

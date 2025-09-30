@@ -18,7 +18,7 @@ async function createTestWorkspace(
     slug: string;
     description: string;
     isPublic: boolean;
-  }> = {}
+  }> = {},
 ): Promise<Workspace> {
   const defaultData = {
     name: "Test Workspace",
@@ -114,14 +114,12 @@ describe("Workspace API Endpoints", async () => {
   });
 
   it("should reject workspace creation with duplicate slug", async () => {
-    // First create a workspace using helper
     await createTestWorkspace(ctoAuth, {
       name: "First Workspace",
       slug: "duplicate-test-slug",
       description: "First workspace with this slug",
     });
 
-    // Then try to create another with the same slug
     await expect(
       $fetch("/api/workspaces", {
         method: "POST",
@@ -139,11 +137,10 @@ describe("Workspace API Endpoints", async () => {
   });
 
   it("should return list of workspaces for authenticated user", async () => {
-    // Create a workspace for this test using helper
     const testWorkspace = await createTestWorkspace(ctoAuth, {
       name: "List Test Workspace",
       description: "Workspace for testing list functionality",
-      isPublic: false
+      isPublic: false,
     });
 
     const response = await $fetch<{ entries: WorkspaceWithOwner[] }>("/api/workspaces", {
@@ -172,13 +169,11 @@ describe("Workspace API Endpoints", async () => {
   });
 
   it("should return public workspaces for non-members", async () => {
-    // Create a public workspace with CTO using helper
     const testWorkspace = await createTestWorkspace(ctoAuth, {
       name: "Public Test Workspace",
       description: "Public workspace for testing non-member access",
-      isPublic: true
+      isPublic: true,
     });
-
 
     const response = await $fetch<{ entries: WorkspaceWithOwner[] }>("/api/workspaces", {
       method: "GET",
@@ -188,7 +183,7 @@ describe("Workspace API Endpoints", async () => {
     });
 
     expect(Array.isArray(response.entries)).toBe(true);
-    
+
     const workspace = response.entries.find(w => w.id === testWorkspace.id);
     expect(workspace).toBeDefined();
     expect(workspace?.isJoined).toBe(false);
@@ -196,11 +191,10 @@ describe("Workspace API Endpoints", async () => {
   });
 
   it("should return workspace details for member if workspace is not public", async () => {
-    // Create a workspace for this test using helper
     const testWorkspace = await createTestWorkspace(ctoAuth, {
       name: "Details Test Workspace",
       description: "Workspace for testing details endpoint",
-      isPublic: false
+      isPublic: false,
     });
 
     const response = await $fetch<WorkspaceWithOwner>(`/api/workspaces/${testWorkspace.id}`, {
@@ -254,11 +248,10 @@ describe("Workspace API Endpoints", async () => {
   });
 
   it("should allow user to join public workspace", async () => {
-    // Create a public workspace with CTO using helper
     const testWorkspace = await createTestWorkspace(ctoAuth, {
       name: "Join Test Workspace",
       description: "Workspace for testing join functionality",
-      isPublic: true
+      isPublic: true,
     });
 
     const response = await $fetch<{ message: string }>(`/api/workspaces/${testWorkspace.id}/join`, {
@@ -273,7 +266,6 @@ describe("Workspace API Endpoints", async () => {
   });
 
   it("should reject joining if already a member", async () => {
-    // Create a workspace and join it first using helper
     const testWorkspace = await createTestWorkspace(ctoAuth, {
       name: "Already Member Test",
       description: "Workspace for testing duplicate join",
@@ -318,7 +310,6 @@ describe("Workspace API Endpoints", async () => {
   });
 
   it("should allow member to leave workspace", async () => {
-    // Create a workspace and join it first using helper
     const testWorkspace = await createTestWorkspace(ctoAuth, {
       name: "Leave Test Workspace",
       description: "Workspace for testing leave functionality",
@@ -345,7 +336,6 @@ describe("Workspace API Endpoints", async () => {
   });
 
   it("should reject owner leaving their own workspace", async () => {
-    // Create a workspace using helper
     const testWorkspace = await createTestWorkspace(ctoAuth, {
       name: "Owner Leave Test",
       description: "Workspace for testing owner leave rejection",
@@ -362,7 +352,6 @@ describe("Workspace API Endpoints", async () => {
   });
 
   it("should reject leaving if not a member", async () => {
-    // Create a workspace without joining as customer using helper
     const testWorkspace = await createTestWorkspace(ctoAuth, {
       name: "Non-member Leave Test",
       description: "Workspace for testing non-member leave rejection",
