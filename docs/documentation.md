@@ -8,13 +8,10 @@ Das **Technology Radar** ist eine Webanwendung, die es Unternehmen und Organisat
 
 ### Kernfunktionen
 
-- Verwaltung von Technologien in verschiedenen Kategorien (Framework, Tool, Technique, Platform)
-- Bewertung von Technologien in vier Ringen (Adopt, Trial, Assess, Hold)
-- Visuelle Darstellung als interaktiver Radar mit D3.js
-- Multi-Workspace-Unterstützung für verschiedene Organisationseinheiten
-- Benutzer- und Rechteverwaltung mit JWT-basierter Authentifizierung
-- Verwaltung von Technologien durch CTO und Tech-Lead
-- Verwaltung von Mitglieder durch CTO
+- **Technologie-Management**: Kategorisierung in Framework, Tool, Technique, Platform
+- **Radar-Visualisierung**: Interaktive D3.js-Darstellung mit vier Bewertungsringen (Adopt, Trial, Assess, Hold)
+- **Multi-Workspace**: Organisationseinheiten mit rollenbasierter Zugriffskontrolle
+- **Benutzerverwaltung**: JWT-Authentifizierung, CTO/Tech-Lead/Customer-Rollen
 
 ### Qualitätsziele
 
@@ -33,7 +30,6 @@ Das **Technology Radar** ist eine Webanwendung, die es Unternehmen und Organisat
 | **Tech-Lead** | Verwaltung von Technologien in einem Workspace |
 | **Mitarbeiter** | Nutzen den Technologie-Radar um Infos bzgl. der eingesetzen Technologien zu erhalten |
 | **Software-Entwickler** | Entwickeln und Testen die Applikation |
-| **Dozenten** | Bewertung der technischen Umsetzung und Dokumentationsqualität |
 
 ## Randbedingungen
 
@@ -118,17 +114,14 @@ Nuxt 4 ist ein Fullstack Framework und erlaubt es somit, Frontend und Backend im
 | **Authentifizierung** | JWT + bcrypt | Stateless Authentication, sichere Password-Hashing |
 | **Visualisierung** | D3.js | Mächtige, flexible Datenvisualisierung für interaktive Charts |
 | **Testing** | Vitest + Playwright | Moderne, schnelle Test-Runner für Unit- und E2E-Tests |
-| **Deployment** | Docker | Einfache Möglichkeit die Applikation zu verbreiten |
+| **Deployment** | Docker | Einfache Möglichkeit die Applikation zu verbreiten/nutzen |
 
-## Architektur-Ansatz
+## Architektur
 
-**Layered Architecture** mit klarer Trennung von Verantwortlichkeiten:
-
-1. **Presentation Layer**: Vue.js-Komponenten mit Nuxt UI
-2. **API Layer**: RESTful endpoints mit Nitro Server
-3. **Business Logic**: Service-Layer für fachliche Logik
-4. **Data Access**: Drizzle ORM für typsichere Datenbankzugriffe
-5. **Database**: PostgreSQL für konsistente Datenhaltung
+**3-Schicht-Architektur:**
+- **Frontend**: Vue.js/Nuxt SPA mit D3.js-Visualisierung
+- **Backend**: Nitro API mit JWT-Auth und Zod-Validierung  
+- **Datenbank**: PostgreSQL mit Drizzle ORM
 
 ## Bausteinsicht
 
@@ -155,19 +148,19 @@ C4Context
 
 ```mermaid
 C4Container
-  title Technology Radar - Container Diagram
+  title Technology Radar - Systemübersicht
 
-  Person(user, "Benutzer", "CTO/Tech-Lead/Customer")
-
-  System_Boundary(radar, "Technology Radar System") {
-    Container(spa, "Single Page App", "Vue.js/Nuxt", "Benutzeroberfläche mit D3.js Radar")
-    Container(api, "API Server", "Nitro/Node.js", "REST API mit JWT Auth")
-    ContainerDb(db, "PostgreSQL", "Database", "Benutzer, Workspaces, Technologien")
+  Person(user, "Benutzer")
+  
+  System_Boundary(radar, "Technology Radar") {
+    Container(spa, "Frontend", "Vue.js/Nuxt", "D3.js Radar + UI")
+    Container(api, "Backend", "Nitro", "REST API + Auth")
+    ContainerDb(db, "Database", "PostgreSQL", "Drizzle ORM")
   }
 
-  Rel(user, spa, "Nutzt", "HTTPS")
-  Rel(spa, api, "API Calls", "HTTP/REST")
-  Rel(api, db, "Liest/Schreibt", "SQL/TCP:5432")
+  Rel(user, spa, "HTTPS")
+  Rel(spa, api, "REST")
+  Rel(api, db, "SQL")
 ```
 
 ### Ebene 3 - Frontend Components (C3)
@@ -365,13 +358,22 @@ const technologySchema = z.object({
 Als Framework wurde Nuxt gewählt, da dies eine einheitliche TypeScript-Codebase für Frontend und Backend bereitstellt. Zudem erhält man integrierte API-Routen ohne separaten Server.
 
 ### Drizzle ORM
-Drizzle ist ein mir noch unbekanntes, aber sehr interessantes ORM, welches sich im Verlauf des Projektes als sehr nützlich bewiesen hat.
+Da ich noch wenig Erfahrung mit JavaScript ORMs hatte, sah Drizzle sehr interessant aus und ich wollte es gerne ausprobieren. Der SQL-first Ansatz und die TypeScript-Integration haben sich im Projektverlauf als sehr wertvoll erwiesen.
 
 ### D3.js für Radar-Visualisierung
 D3.js bietet eine sehr flexible Möglichkeit, mittels SVGs Diagramme zu zeichnen. Es hat builtin-Funktionalitäten für Interaktionen wie "click" oder "hover" und eine gute Dokumentation.
 
-### Docker für Deployment / Dev
-Docker wurde zum einen für die Entwicklung benutzt, um eine PostgresSQL Datenbank zu erstellen. Für den Deploy/die Abgabe wurde docker für den Build && Deploy der gesamten Applikation genutzt. Dies erleichterte die Entwicklung und das Deployment, da man so eine einheitliche Umgebung hat.
+### Docker für Entwicklung und Deployment
+Docker wird sowohl in der Entwicklung als auch für das Deployment eingesetzt und bietet mehrere Vorteile:
+
+**Entwicklungsumgebung:**
+- Lokale PostgreSQL-Datenbank via Docker Compose
+- Einfaches Setup ohne manuelle Datenbankinstallation
+
+**Deployment:**
+- Containerisierung der gesamten Applikation (Frontend + Backend + Datenbank)
+- Build-Prozess über Docker für reproduzierbare Deployments
+- Plattformunabhängige Bereitstellung der Anwendung
 
 ## Qualitätsanforderungen
 
@@ -392,15 +394,9 @@ Die Applikation sollte folgende Qualitätsanforderungen erreichen:
 
 ### Technische Schulden
 
-**Bekannte Limitierungen:**
-- Fehlende Internationalisierung (i18n) - nur deutsche Texte
-- Keine Real-Time Collaboration - manuelle Refresh erforderlich
-- Mitglieder können nicht aus einem Workspace entfernt werden
-
-**Verbesserungsmöglichkeiten:**
-- WebSocket-Integration für Live-Updates
-- PWA-Features für Offline-Nutzung
-- Filtering/Search für Technologie-Liste
+- **Testing**: Einführung zusätzlicher Tests. Vor allem e2e und frontend-Tests.
+- **Internationalisierung**: Support für mehrere Sprachen anbieten.
+- **Performance**: Verbesserung der Performance mittels caching.
 
 ## Reflektion
 Da ich bereits aus dem Web-Development-Bereich komme, konnte ich viele meiner bisherigen Erfahrungen in das Projekt einbringen. Nuxt war mir zuvor schon begegnet, allerdings hatte ich es bisher noch nie praktisch eingesetzt. Im Verlauf des Projekts konnte ich mich intensiv mit Nuxt 4 beschäftigen und habe ein besseres Verständnis dafür gewonnen, wie flexibel es als Fullstack-Framework einsetzbar ist.
@@ -414,12 +410,3 @@ Insgesamt konnte ich durch das Projekt meine Kenntnisse in Nuxt, UI-Design und D
 ## Fazit
 Das Projekt hat mir sehr viel Spass gemacht. Ich konnte intensiv mit Nuxt 4 arbeiten und dabei viel über die Entwicklung einer Fullstack-Anwendung lernen. Besonders spannend war für mich der Einsatz von Drizzle ORM, PostgreSQL und Zod, wodurch ich meine Kenntnisse in typsicheren Datenbankzugriffen und Datenvalidierung erweitern konnte. Auch der Einsatz von Vitest für Tests hat mir gezeigt, wie wichtig automatisiertes Testing für sauberen und wartbaren Code ist. Insgesamt konnte ich in diesem Projekt viele neue Technologien praktisch anwenden und wertvolle Erfahrungen für zukünftige Web-Development-Projekte sammeln.
 
-## Glossar
-
-| Begriff | Definition |
-|---------|------------|
-| **Ring** | Bewertungskategorie für Technologien: Adopt (empfohlen), Trial (testen), Assess (bewerten), Hold (vermeiden) |
-| **Workspace** | Organisationseinheit für Teams mit eigenständigem Technologie-Radar |
-| **bcrypt** | Adaptive Hash-Funktion für sichere Passwort-Speicherung |
-| **Zod** | TypeScript-first Schema Validation Library |
-| **D3.js** | Data-Driven Documents - JavaScript Library für Custom Data Visualizations |
