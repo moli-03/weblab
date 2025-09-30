@@ -77,6 +77,7 @@ export default defineEventHandler(async event => {
       ...ws,
       owner: toPublicUser(ws.owner),
       isJoined: joinedWorkspaceIds.includes(ws.id),
+      memberRole: workspaceProfiles.find(profile => profile.workspaceId === ws.id)?.role,
     }));
 
     return {

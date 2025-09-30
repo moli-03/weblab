@@ -29,7 +29,8 @@
 |              | Dokumentation                                                             | 2h      |
 | **30.09.25** | Dokumentation                                                             | 1h      |
 |              | Workspace-Members entfernen                                               | 1h      |
+|              | Workspace tests                                                           | 2h      |
 
 ---
 
-✅ **Gesamtzeit: 53 Stunden**
+✅ **Gesamtzeit: 55 Stunden**

@@ -459,7 +459,7 @@ Die Applikation sollte folgende Qualitätsanforderungen erreichen:
 
 ### Technische Schulden
 
-- **Testing**: Einführung zusätzlicher Tests. Vor allem e2e und frontend-Tests.
+- **Testing**: Einführung zusätzlicher Tests. Vor allem API und Frontend-Tests.
 - **Internationalisierung**: Support für mehrere Sprachen anbieten.
 - **Performance**: Verbesserung der Performance mittels caching.
 
