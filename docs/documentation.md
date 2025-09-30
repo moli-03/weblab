@@ -214,6 +214,8 @@ C4Component
 
 ## Laufzeitsicht
 
+Ich habe diesen Abschnitt bewusst klein gehalten, da die Dokumentation ansonsten zu gross werden würde. Daher folgen hier als Beispiele der Ablauf von Authentifizierung und Technologieerstellung.
+
 ### Benutzer-Authentifizierung
 
 ```mermaid
@@ -237,7 +239,7 @@ sequenceDiagram
     SPA-->>User: Login erfolgreich
 ```
 
-### Technologie-Management
+### Technologie erstellen
 
 ```mermaid
 sequenceDiagram
