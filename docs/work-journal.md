@@ -28,7 +28,8 @@
 | **28.09.25** | Renaming von Rollen (Admin -> CTO, CTO -> Tech-Lead)                      | 1h      |
 |              | Dokumentation                                                             | 2h      |
 | **30.09.25** | Dokumentation                                                             | 1h      |
+|              | Workspace-Members entfernen                                               | 1h      |
 
 ---
 
-✅ **Gesamtzeit: 52 Stunden**
+✅ **Gesamtzeit: 53 Stunden**
