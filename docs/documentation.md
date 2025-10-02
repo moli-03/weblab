@@ -145,7 +145,7 @@ C4Context
 ```
 
 ### Ebene 2 - Container Diagram (C2)
-
+https://github.com/moli-03/weblab
 ```mermaid
 C4Container
   title Technology Radar - Systemübersicht
@@ -466,11 +466,11 @@ Die Applikation sollte folgende Qualitätsanforderungen erreichen:
 ## Reflektion
 Da ich bereits aus dem Web-Development-Bereich komme, konnte ich viele meiner bisherigen Erfahrungen in das Projekt einbringen. Nuxt war mir zuvor schon begegnet, allerdings hatte ich es bisher noch nie praktisch eingesetzt. Im Verlauf des Projekts konnte ich mich intensiv mit Nuxt 4 beschäftigen und habe ein besseres Verständnis dafür gewonnen, wie flexibel es als Fullstack-Framework einsetzbar ist.
 
-Eine der grössten Herausforderungen für mich war das UI-Design, da ich in diesem Bereich bisher nur wenig Erfahrung gesammelt habe. Anfangs fiel es mir schwer, ein konsistentes und ansprechendes Interface zu gestalten. Durch die Arbeit mit Nuxt UI Components in Kombination mit TailwindCSS konnte ich diese Hürde jedoch meistern und das Projekt visuell auf ein solides Fundament stellen.
+Eine der grössten Herausforderungen für mich war das UI-Design, da ich in diesem Bereich bisher nur wenig Erfahrung gesammelt habe. Anfangs fiel es mir schwer, ein konsistentes und ansprechendes Interface zu gestalten. Durch die Arbeit mit Nuxt UI Components in Kombination mit TailwindCSS kam dann schlussendlich doch ein brauchbares UI zustande.
 
-Besonders interessiert hat mich der Einsatz von Drizzle ORM. Mein Ziel war es, Drizzle besser kennenzulernen und zu prüfen, ob es auch für zukünftige Projekte einen Mehrwert bietet. Dabei hat mir die starke TypeScript-Integration und die Klarheit des SQL-first-Ansatzes sehr gefallen.
+Besonders interessiert hat mich der Einsatz von Drizzle ORM. Mein Ziel war es, Drizzle besser kennenzulernen und zu prüfen, ob ich es auch für zukünftige Projekte verwenden könnte. Dabei hat mir die starke TypeScript-Integration und die Klarheit des SQL-first-Ansatzes sehr gefallen.
 
-Insgesamt konnte ich durch das Projekt meine Kenntnisse in Nuxt, UI-Design und Drizzle erweitern und wertvolle Erfahrungen sammeln, die mir bei zukünftigen Projekten zugutekommen werden.
+Insgesamt konnte ich durch das Projekt meine Kenntnisse in Nuxt, Nitro, UI-Design und Drizzle erweitern und wertvolle Erfahrungen sammeln, die mir bei zukünftigen Projekten zugutekommen werden.
 
 ## Fazit
 Das Projekt hat mir sehr viel Spass gemacht. Ich konnte intensiv mit Nuxt 4 arbeiten und dabei viel über die Entwicklung einer Fullstack-Anwendung lernen. Besonders spannend war für mich der Einsatz von Drizzle ORM, PostgreSQL und Zod, wodurch ich meine Kenntnisse in typsicheren Datenbankzugriffen und Datenvalidierung erweitern konnte. Auch der Einsatz von Vitest für Tests hat mir gezeigt, wie wichtig automatisiertes Testing für sauberen und wartbaren Code ist. Insgesamt konnte ich in diesem Projekt viele neue Technologien praktisch anwenden und wertvolle Erfahrungen für zukünftige Web-Development-Projekte sammeln.
