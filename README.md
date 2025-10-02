@@ -2,6 +2,9 @@
 
 Dies ist das Projekt für das Modul WEBLAB im HS25. Ziel ist es, einen Technologie-Radar zu entwickeln, der es ermöglicht, verschiedene Technologien zu kategorisieren und deren Entwicklung zu verfolgen.
 
+- [Dokumentation](docs/documentation.md)
+- [Arbeitsjournal](docs/work-journal.md)
+
 ## Tech-Stack
 
 - **Frontend**: Nuxt 4 + Nuxt UI + Tailwind CSS
@@ -53,3 +56,12 @@ Die Applikation ist dann unter `http://localhost:3000` erreichbar.
 Es können auch andere ENV-Variablen mitgegeben werden als die standardmässig konfigurierten.
 
 Falls ein DB-Seed ausgeführt werden soll, muss der `seed`-Service im `stack.deploy.yml` aktiviert werden.
+
+## Users
+Falls ein DB-Seed gemacht wurde, kann man sich mit jedem der erstellen Benutzern mit dem Passwort `hslu1234` einloggen.
+Bsp.: `admin@admin.dev` + `hslu1234`
+
+## Workspaces
+Die Applikation unterstützt mehrere Workspaces. Diese können entweder `public` oder `private` sein. Den `public` Workspaces kann man immer beitreten, den `private` Workspaces nur mit einer Einladung.
+
+Es können eigene Workspaces unter `Your Workspaces` erstellt werden, oder unter `Discover` kann anderen `public` Workspaces beigetreten werden.
