@@ -184,7 +184,7 @@
       <div class="mb-6">
         <div
           v-if="inviteInfo.workspace.logoUrl"
-          class="w-16 h-16 mx-auto rounded-lg bg-gray-100 dark:bg-zinc-800 overflow-hidden ring-1 ring-black/5 dark:ring-white/10"
+          class="w-16 h-16 mx-auto rounded-lg bg-zinc-800 overflow-hidden ring-1 ring-white/10"
         >
           <img
             :src="inviteInfo.workspace.logoUrl"
@@ -194,26 +194,26 @@
         </div>
         <div
           v-else
-          class="w-16 h-16 mx-auto rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center ring-1 ring-black/5 dark:ring-white/10"
+          class="w-16 h-16 mx-auto rounded-lg bg-primary-900/30 flex items-center justify-center ring-1 ring-white/10"
         >
-          <span class="text-primary-600 dark:text-primary-400 font-bold text-xl">
+          <span class="text-primary-400 font-bold text-xl">
             {{ inviteInfo.workspace.name.charAt(0).toUpperCase() }}
           </span>
         </div>
       </div>
 
       <!-- Title and Description -->
-      <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Join {{ inviteInfo.workspace.name }}</h1>
+      <h1 class="text-3xl font-bold text-gray-100 mb-2">Join {{ inviteInfo.workspace.name }}</h1>
 
-      <p v-if="inviteInfo.workspace.description" class="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
+      <p v-if="inviteInfo.workspace.description" class="text-gray-400 mb-6 max-w-md mx-auto">
         {{ inviteInfo.workspace.description }}
       </p>
 
       <!-- Inviter Info -->
       <UCard class="mb-6 max-w-sm mx-auto text-left" :ui="{ body: 'p-4' }">
-        <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Invited by</p>
-        <p class="font-medium text-gray-900 dark:text-gray-100">{{ inviteInfo.inviter.name }}</p>
-        <p class="text-sm text-gray-500 dark:text-gray-400">{{ inviteInfo.inviter.email }}</p>
+        <p class="text-sm text-gray-400 mb-1">Invited by</p>
+        <p class="font-medium text-gray-100">{{ inviteInfo.inviter.name }}</p>
+        <p class="text-sm text-gray-400">{{ inviteInfo.inviter.email }}</p>
       </UCard>
 
       <!-- Invite Status -->
@@ -269,13 +269,13 @@
             @click="acceptInvite"
           />
 
-          <p class="text-xs text-gray-500 dark:text-gray-400">
+          <p class="text-xs text-gray-400">
             By accepting, you'll be added as a member of this workspace.
           </p>
         </div>
 
         <!-- Expiry Information -->
-        <div class="text-xs text-gray-400 dark:text-gray-500 pt-4">
+        <div class="text-xs text-gray-500 pt-4">
           <p>This invite expires on {{ formattedExpiry }}</p>
         </div>
       </div>

@@ -161,7 +161,7 @@
         />
 
         <div class="space-y-2">
-          <label class="block text-xs font-medium text-gray-600 dark:text-gray-400">Invite link</label>
+          <label class="block text-xs font-medium text-gray-400">Invite link</label>
           <UInput
             :model-value="generatedInvite.inviteUrl"
             readonly
@@ -182,14 +182,14 @@
           </UInput>
         </div>
 
-        <div v-if="generatedInvite.email" class="text-sm text-gray-600 dark:text-gray-400">
+        <div v-if="generatedInvite.email" class="text-sm text-gray-400">
           <UBadge color="neutral" variant="soft" size="xs" class="mr-2">Associated email</UBadge>
           {{ generatedInvite.email }}
         </div>
 
         <UAlert color="neutral" variant="subtle" icon="material-symbols:info">
           <template #description>
-            <ul class="list-disc pl-5 space-y-1 text-xs text-gray-600 dark:text-gray-400">
+            <ul class="list-disc pl-5 space-y-1 text-xs text-gray-400">
               <li>This link can only be used once</li>
               <li>The link will expire in 24 hours</li>
               <li>The person will be added as a regular member (customer role)</li>
