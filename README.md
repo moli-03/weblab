@@ -55,7 +55,7 @@ Die Applikation ist dann unter `http://localhost:3000` erreichbar.
 
 Es können auch andere ENV-Variablen mitgegeben werden als die standardmässig konfigurierten.
 
-Falls ein DB-Seed ausgeführt werden soll, muss der `seed`-Service im `stack.deploy.yml` aktiviert werden.
+Es wird automatisch ein DB-Seed ausgeführt. Dieser kann im `stack.deploy.yml` bei Bedarf deaktiviert werden.
 
 ## Users
 Falls ein DB-Seed gemacht wurde, kann man sich mit jedem der erstellen Benutzern mit dem Passwort `hslu1234` einloggen.

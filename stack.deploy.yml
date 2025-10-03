@@ -50,31 +50,31 @@ services:
       - weblab-network
 
   # Optional seed service - uncomment if you want to seed the database
-  # seed:
-  #   image: node:20-alpine
-  #   depends_on:
-  #     migrate:
-  #       condition: service_completed_successfully
-  #   working_dir: /app
-  #   environment:
-  #     DB_USERNAME: ${DB_USERNAME:-admin}
-  #     DB_PASSWORD: ${DB_PASSWORD:-admin}
-  #     DB_HOST: ${DB_HOST:-db}
-  #     DB_PORT: ${DB_PORT:-5432}
-  #     DB_NAME: ${DB_NAME:-weblab}
-  #     JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-Zf8uXiEC7lrJ3BC3eGC8leUjvPaJWKHRobnYIfJ6wkUA0qiugPpL+8XRrTgkmvaH}
-  #     JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-DfGDLwHg4VCA+viWXKW7CJGUbcKbCAU2bOjCdjilhsdUduYaRZcH8PWgen6L0/Zq}
-  #   volumes:
-  #     - .:/app
-  #   command: >
-  #     sh -c "
-  #       npm install &&
-  #       npm run db:seed &&
-  #       echo 'Database seeding completed successfully'
-  #     "
-  #   restart: "no"
-  #   networks:
-  #     - weblab-network
+  seed:
+    image: node:20-alpine
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    working_dir: /app
+    environment:
+      DB_USERNAME: ${DB_USERNAME:-admin}
+      DB_PASSWORD: ${DB_PASSWORD:-admin}
+      DB_HOST: ${DB_HOST:-db}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: ${DB_NAME:-weblab}
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-Zf8uXiEC7lrJ3BC3eGC8leUjvPaJWKHRobnYIfJ6wkUA0qiugPpL+8XRrTgkmvaH}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-DfGDLwHg4VCA+viWXKW7CJGUbcKbCAU2bOjCdjilhsdUduYaRZcH8PWgen6L0/Zq}
+    volumes:
+      - .:/app
+    command: >
+      sh -c "
+        npm install &&
+        npm run db:seed &&
+        echo 'Database seeding completed successfully'
+      "
+    restart: "no"
+    networks:
+      - weblab-network
 
   # Application service using Dockerfile
   app:

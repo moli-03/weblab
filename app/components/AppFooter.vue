@@ -13,7 +13,7 @@
 
       <!-- Center / Title -->
       <div class="md:text-center">
-        <p class="font-medium">WEBALB</p>
+        <p class="font-medium">WEBLAB</p>
         <p class="text-xs text-zinc-400 mt-0.5">Technology Radar</p>
       </div>
 
